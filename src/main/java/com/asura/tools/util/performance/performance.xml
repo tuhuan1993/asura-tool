@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<performance thread-count="1" path="D:/urls"
+	result-path="D:/data/test/applist" exe-time="1" print-count="10">
+	<times>
+		<long>5</long>
+		<long>10</long>
+		<long>20</long>
+		<long>30</long>
+		<long>40</long>
+		<long>50</long>
+		<long>100</long>
+		<long>200</long>
+		<long>500</long>
+		<long>1000</long>
+	</times>
+</performance>

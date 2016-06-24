@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<monitor-definition
+	monitor-url="http://localhost:8080/monitor/admin/register.htm"
+	register-interval="10000">
+	<categories>
+		<category>
+			<category-nodes>
+				<category-node name="项目" node-value="pc搜索" />
+				<category-node name="机器" node-value="192.168.1.126" />
+				<category-node name="模块" node-value="索引" />
+			</category-nodes>
+			<result
+				class="com.cpkf.yyjd.lily.framework.monitor.MonitorInfo"
+				host="localhost" path="/home/release/lily/logs" key="reciever" />
+		</category>
+		<category>
+			<category-nodes>
+				<category-node name="项目" node-value="pc搜索" />
+				<category-node name="机器" node-value="192.168.1.126" />
+				<category-node name="模块" node-value="索引" />
+			</category-nodes>
+			<result
+				class="com.cpkf.yyjd.lily.framework.monitor.MonitorInfo"
+				host="localhost" path="/home/release/lily/logs" key="importer" />
+		</category>
+		<category>
+			<category-nodes>
+				<category-node name="项目" node-value="pc搜索" />
+				<category-node name="机器" node-value="192.168.1.126" />
+				<category-node name="模块" node-value="索引" />
+			</category-nodes>
+			<result
+				class="com.cpkf.yyjd.lily.framework.monitor.MonitorInfo"
+				host="localhost" path="/home/release/lily/logs" key="indexer" />
+		</category>
+		<category>
+			<category-nodes>
+				<category-node name="项目" node-value="pc搜索" />
+				<category-node name="机器" node-value="192.168.1.126" />
+				<category-node name="模块" node-value="搜索" />
+			</category-nodes>
+			<result
+				class="com.cpkf.yyjd.lily.framework.monitor.MonitorInfo"
+				host="localhost" path="/home/release/lily/logs" key="provider" />
+		</category>
+		<category>
+			<category-nodes>
+				<category-node name="项目" node-value="pc搜索" />
+				<category-node name="机器" node-value="192.168.1.126" />
+				<category-node name="模块" node-value="搜索" />
+			</category-nodes>
+			<result
+				class="com.cpkf.yyjd.lily.framework.monitor.MonitorInfo"
+				host="localhost" path="/home/release/lily/logs" key="searcher" />
+		</category>
+	</categories>
+</monitor-definition>
