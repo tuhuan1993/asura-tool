@@ -14,6 +14,10 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.resources.plugin>2.6</maven.resources.plugin>
 		<maven.compiler.plugin>2.3.2</maven.compiler.plugin>
+		<slf4j.log4j12.version>1.7.5</slf4j.log4j12.version>
+		<slf4j.api.version>1.7.5</slf4j.api.version>
+		<log4j.rolling.appender.version>1.2.15</log4j.rolling.appender.version>
+		<jmockit.version>1.25</jmockit.version>
 	</properties>
 
 	<dependencies>
@@ -21,6 +25,12 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jmockit</groupId>
+			<artifactId>jmockit</artifactId>
+			<version>${jmockit.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -57,6 +67,11 @@
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<version>2.4</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.9.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -97,6 +112,28 @@
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongo-java-driver</artifactId>
 			<version>2.12.5</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>18.0</version>
+		</dependency>
+		<!--slf4j -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${slf4j.log4j12.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j-rolling-appender</artifactId>
+			<version>${log4j.rolling.appender.version}</version>
 		</dependency>
 	</dependencies>
 	<build>

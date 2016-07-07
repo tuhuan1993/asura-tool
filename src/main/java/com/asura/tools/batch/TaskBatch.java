@@ -5,14 +5,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Stack;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.asura.tools.util.DateUtil;
 import com.asura.tools.util.ExceptionUtil;
 
 
 public class TaskBatch {
-	private static final Logger logger = Logger.getLogger(TaskBatch.class);
+	
+	private static final Logger logger=LoggerFactory.getLogger(TaskBatch.class);
 	private boolean complete;
 	private Stack<IBatchTask> tasks;
 	private List<Thread> pool;

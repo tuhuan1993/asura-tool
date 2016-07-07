@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+	<appender name="consoleAppender" class="org.apache.log4j.ConsoleAppender">
+		<param name="Target" value="System.out" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss SSS} %-5p] [%t] %c - %m%n" />
+		</layout>
+	</appender>
+
+	<appender name="asuraAppender"
+		class="org.apache.log4j.appender.TimeAndSizeRollingAppender">
+		<param name="File" value="${asura.tool.log.dir}/asuraTool.log" />
+		<param name="DatePattern" value="'_'yyyyMMdd" />
+		<param name="MaxFileSize" value="204800KB" />
+		<param name="DateRollEnforced" value="true" />
+		<param name="ScavengeInterval" value="-1" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss SSS} %-5p] [%t] %c - %m%n" />
+		</layout>
+	</appender>
+	
+	<appender name="rootAppender"
+		class="org.apache.log4j.appender.TimeAndSizeRollingAppender">
+		<param name="File" value="${asura.tool.log.dir}/root.log" />
+		<param name="DatePattern" value="'_'yyyyMMdd" />
+		<param name="MaxFileSize" value="204800KB" />
+		<param name="DateRollEnforced" value="true" />
+		<param name="ScavengeInterval" value="-1" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss SSS} %-5p] [%t] %c - %m%n" />
+		</layout>
+	</appender>
+
+	<logger name="com.asura.tools"
+		additivity="false">
+		<level value="debug" />
+		<appender-ref ref="asuraAppender" />
+		<appender-ref ref="consoleAppender" />
+	</logger>
+
+	<root>
+		<level value="warn" />
+		<appender-ref ref="rootAppender" />
+	</root>
+
+</log4j:configuration>  
+
