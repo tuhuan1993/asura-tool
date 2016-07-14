@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 
-import com.asura.tools.data.newmysql.ConnectionInformation;
+import com.asura.tools.data.mysql.ConnectionInformation;
 import com.asura.tools.util.StringUtil;
 
 public class OracleConnetionPool {

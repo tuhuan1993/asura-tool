@@ -25,10 +25,12 @@ public class SelectSQL implements ISQL, Serializable {
 	}
 
 	public SelectSQL(String table) {
+		this();
 		addTable(table);
 	}
 
 	public SelectSQL(String table, String[] fields) {
+		this();
 		addTable(table);
 		addFields(fields);
 	}

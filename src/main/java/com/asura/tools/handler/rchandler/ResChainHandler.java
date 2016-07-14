@@ -36,8 +36,4 @@ public abstract class ResChainHandler {
 
 	public abstract DataRecord process(DataRecord record, ResChainHandlerLog log);
 
-	public DataRecord process(DataRecord record) {
-		return process(record, null);
-	}
-
 }

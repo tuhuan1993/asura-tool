@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
 import com.asura.tools.util.DateUtil.TimeUnit;
 
@@ -60,6 +61,17 @@ public class DateUtil {
 		} catch (Exception localException) {
 		}
 		return null;
+	}
+
+	public static Date getDateFromString(String date, String format, Locale locale) {
+		SimpleDateFormat sf = new SimpleDateFormat("format", locale);
+		try {
+			return sf.parse(date);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		return new Date();
 	}
 
 	public static double getTimeByMinute(Date date1, Date date2) {
@@ -139,7 +151,7 @@ public class DateUtil {
 			time = Double.valueOf(value * Double.valueOf(86400000.0D).doubleValue());
 			break;
 		case 2:
-			time = Double.valueOf(value * Double.valueOf("2592000000").doubleValue());
+			time = Double.valueOf(value * Double.valueOf(2592000000.0D).doubleValue());
 			break;
 		case 3:
 			time = Double.valueOf(value * Double.valueOf(604800000.0D).doubleValue());

@@ -18,7 +18,7 @@ import com.asura.tools.data.DataIterator;
 import com.asura.tools.data.DataRecord;
 import com.asura.tools.data.EmptyDataIterator;
 import com.asura.tools.data.IEditor;
-import com.asura.tools.data.newmysql.ConnectionInformation;
+import com.asura.tools.data.mysql.ConnectionInformation;
 import com.asura.tools.sql.DeleteSQL;
 import com.asura.tools.sql.ISQL;
 import com.asura.tools.sql.InsertSQL;

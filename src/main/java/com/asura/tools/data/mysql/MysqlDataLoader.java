@@ -1,4 +1,4 @@
-package com.asura.tools.data.newmysql;
+package com.asura.tools.data.mysql;
 
 import java.util.ArrayList;
 import java.util.HashMap;

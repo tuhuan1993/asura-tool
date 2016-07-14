@@ -1,28 +1,86 @@
 package com.asura.tools.task;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
+
 import com.asura.tools.task.imp.DefaultDTaskMessager;
 
-public abstract class AbstractDTask implements DTask{
-	
+public abstract class AbstractDTask implements DTask {
+
 	protected String name;
 	protected String descriptor;
-	
+
 	protected boolean isDone;
 	protected boolean isSuccess;
 	protected boolean isError;
-	
+
 	protected String successMessage;
 	protected String errorMessage;
-	
+
 	protected DTaskMessager messager;
-	
-	public AbstractDTask(String name, String descriptor) {
-		this.name=name;
-		this.descriptor=descriptor;
+
+	protected Set<String> dependency = new HashSet<>();
+
+	protected DTaskContext context = new DTaskContext();
+
+	protected String group = "";
+
+	@Override
+	public void setGroup(String group) {
+		if (StringUtils.isNotBlank(group)) {
+			this.group = group;
+		}
 	}
-	
-	public AbstractDTask(String name) {
-		this.name=name;
+
+	@Override
+	public String getGroup() {
+		return this.group;
+	}
+
+	@Override
+	public void setContext(DTaskContext context) {
+		if (context != null) {
+			this.context = context;
+		}
+	}
+
+	@Override
+	public DTaskContext getContext() {
+		return this.context;
+	}
+
+	@Override
+	public void setDependency(String[] dependencies) {
+		if (dependencies != null) {
+			for (String dp : dependencies) {
+				if (StringUtils.isNotBlank(dp)) {
+					dependency.add(dp);
+				}
+			}
+		}
+	}
+
+	@Override
+	public String[] getDependency() {
+		return this.dependency.toArray(new String[] {});
+	}
+
+	@Override
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public String getDesc() {
+		return this.descriptor;
+	}
+
+	@Override
+	public void setDesc(String desc) {
+		this.descriptor = desc;
 	}
 
 	@Override
@@ -37,11 +95,16 @@ public abstract class AbstractDTask implements DTask{
 
 	@Override
 	public void setDtaskMessager(DTaskMessager messager) {
-		if(messager!=null){
-			this.messager=messager;
-		}else{
-			this.messager=new DefaultDTaskMessager();
+		if (messager != null) {
+			this.messager = messager;
+		} else {
+			this.messager = new DefaultDTaskMessager();
 		}
+	}
+
+	@Override
+	public DTaskMessager getDtaskMessager() {
+		return this.messager;
 	}
 
 	@Override

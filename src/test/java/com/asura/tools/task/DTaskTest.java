@@ -16,7 +16,7 @@ import com.asura.tools.task.exception.DependencyDoesNotExistException;
 import com.google.common.util.concurrent.Uninterruptibles;
 
 public class DTaskTest {
-	
+
 	List<String> result = Collections.synchronizedList(new ArrayList<String>());
 
 	@Test
@@ -36,52 +36,55 @@ public class DTaskTest {
 		dg.insert(t2, t3);
 		dg.insert(t1, t2);
 		dg.insert(t0, t1);
-		
+
 		assertNull(dg.getErrors());
 		assertTrue(dg.hasNextRunnalbeDTask());
 		assertEquals(t3, dg.nextRunnableDTask());
-		
+
 		t3.setDone(true);
 		t3.setSuccess(true);
-		
+
 		dg.notifyDone(t3);
-		
+
 		assertTrue(dg.hasNextRunnalbeDTask());
 		assertEquals(t2, dg.nextRunnableDTask());
-		
+
 		dg.notifyDone(t2);
-		
+
 		assertFalse(dg.hasNextRunnalbeDTask());
 		assertEquals(null, dg.nextRunnableDTask());
-		
+
 		assertEquals(1, dg.getFailedTasks().size());
 		assertEquals(2, dg.getZonbieTasks().size());
 
 	}
-	
+
 	@Test
-	public void testMultiThreadedExecutor() throws InterruptedException, DependencyDoesNotExistException{
-		MultiThreadedDTaskExecutor executor=new MultiThreadedDTaskExecutor();
+	public void testMultiThreadedExecutor() throws InterruptedException, DependencyDoesNotExistException {
+		MultiThreadedDTaskExecutor executor = new MultiThreadedDTaskExecutor();
 		DTaskGraph dg = new DTaskGraph();
 		MyTask t0 = new MyTask("t0", 5000);
 		MyTask t1 = new MyTask("t1", 5000);
 		MyTask t2 = new MyTask("t2", 5000);
 		MyTask t3 = new MyTask("t3", 5000);
-		
+		MyTask t4 = new MyTask("t4", 5000);
+
 		dg.insert(t3);
 		dg.insert(t2, t3);
 		dg.insert(t1, t2);
+		dg.insert(t4, t2);
+		dg.insert(t4, t0);
 		dg.insert(t0, t1);
-		dg.insert(t1, new AbstractDTask("exception task") {
-			
+		dg.insert(t1, new AbstractDTask() {
+
 			@Override
 			public void run() {
-				if(3/0==0){
+				if (3 / 0 == 0) {
 					return;
 				}
 			}
 		});
-		
+
 		executor.submit(dg);
 		executor.waitDTaskGraphCompleted(dg);
 	}
@@ -91,7 +94,6 @@ public class DTaskTest {
 		private long sleepMillis;
 
 		public MyTask(String name, long sleepMillis) {
-			super(name);
 			this.sleepMillis = sleepMillis;
 		}
 
@@ -103,17 +105,17 @@ public class DTaskTest {
 			isError = false;
 			result.add(getName());
 		}
-		
-		public void setDone(boolean isDone){
-			this.isDone=isDone;
+
+		public void setDone(boolean isDone) {
+			this.isDone = isDone;
 		}
-		
-		public void setSuccess(boolean success){
-			isSuccess=success;
+
+		public void setSuccess(boolean success) {
+			isSuccess = success;
 		}
-		
-		public void setError(boolean error){
-			isError=error;
+
+		public void setError(boolean error) {
+			isError = error;
 		}
 
 	}

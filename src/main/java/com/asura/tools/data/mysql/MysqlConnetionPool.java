@@ -1,4 +1,4 @@
-package com.asura.tools.data.newmysql;
+package com.asura.tools.data.mysql;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -79,8 +79,10 @@ public class MysqlConnetionPool {
 	private boolean checkConnection(Connection con) {
 		Statement pingStatement = null;
 
-		if (con == null)
+		if (con == null) {
 			return false;
+		}
+
 		try {
 			if (con.isClosed()) {
 				return false;
@@ -95,12 +97,20 @@ public class MysqlConnetionPool {
 				} catch (SQLException localSQLException3) {
 				}
 		}
-		if (pingStatement != null) {
-			try {
-				pingStatement.close();
-			} catch (SQLException localSQLException4) {
-			}
+
+		try {
+			pingStatement = con.createStatement();
+			pingStatement.executeQuery("SELECT 1").close();
+		} catch (SQLException e) {
+			return false;
+		} finally {
+			if (pingStatement != null)
+				try {
+					pingStatement.close();
+				} catch (SQLException localSQLException3) {
+				}
 		}
+
 		return true;
 	}
 }

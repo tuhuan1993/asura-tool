@@ -48,7 +48,7 @@ public class MultiThreadedDTaskExecutor implements DTaskExecutor {
 	@Override
 	public void shutdown() {
 		managePool.shutdown();
-
+		taskPool.shutdown();
 	}
 
 	@Override

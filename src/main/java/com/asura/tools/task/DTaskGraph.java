@@ -70,10 +70,19 @@ public class DTaskGraph {
 	}
 
 	public synchronized void insert(DTask task) {
+		if(task==null){
+			throw new RuntimeException("task should not be null");
+		}
 		tasks.add(task);
 	}
 
 	public synchronized void insert(DTask task, DTask dependency) {
+		if(task==null){
+			throw new RuntimeException("task should not be null");
+		}
+		if(dependency==null){
+			throw new RuntimeException("dependency task should not be null");
+		}
 		tasks.add(task);
 		tasks.add(dependency);
 		dependencies.put(task, dependency);
@@ -113,7 +122,9 @@ public class DTaskGraph {
 
 	public synchronized void notifyDone(DTask task) {
 		if (task.isDone() && task.isSuccess()) {
-			dependencies.values().remove(task);
+			while(dependencies.values().contains(task)){
+				dependencies.values().remove(task);
+			}
 		}else{
 			failedTasks.add(task);
 			calculateZombieTasks(task);

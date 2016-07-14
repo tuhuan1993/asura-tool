@@ -8,66 +8,169 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
 
+import com.asura.tools.data.DataException;
+import com.asura.tools.data.DataIterator;
 import com.asura.tools.data.DataRecord;
+import com.asura.tools.data.EmptyDataIterator;
 import com.asura.tools.data.IEditor;
+import com.asura.tools.sql.DeleteSQL;
+import com.asura.tools.sql.ISQL;
+import com.asura.tools.sql.InsertSQL;
+import com.asura.tools.sql.LimitSQL;
+import com.asura.tools.sql.SelectSQL;
+import com.asura.tools.sql.UpdateSQL;
+import com.asura.tools.util.ExceptionUtil;
+import com.asura.tools.util.StringUtil;
 
 public class MysqlHandler {
-	private Connection connection;
+	private ConnectionInformation ci;
+	private static HashMap<String, String[]> keyCache = new HashMap();
+
+	public MysqlHandler() {
+		this.ci = ConnectionInformation.fromConfigFile();
+	}
 
 	public MysqlHandler(ConnectionInformation ci) {
-		this.connection = MysqlConnection.getInstance(ci);
+		this.ci = ci;
 	}
 
-	public MysqlHandler(ConnectionInformation ci, boolean newconnect) {
-		if (!(newconnect))
-			this.connection = MysqlConnection.getInstance(ci);
-		else
-			this.connection = MysqlConnection.getNewInstance(ci);
+	public static void close(ConnectionInformation ci) {
+		MysqlConnetionPool.closeConnection(ci);
 	}
 
-	public Iterator<DataRecord> iterator(final String sql) {
-		return new Iterator<DataRecord>() {
+	public int getCount(String sql) {
+		try {
+			Statement ps = MysqlConnetionPool.getConnection(this.ci).createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+			ResultSet resultSet = ps.executeQuery(sql);
+
+			resultSet.next();
+
+			Long count = (Long) resultSet.getObject(1);
+			try {
+				ps.close();
+			} catch (Exception localException1) {
+			}
+			try {
+				resultSet.close();
+			} catch (Exception localException2) {
+			}
+			return count.intValue();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	public int getRecordsCount(String table) {
+		try {
+			Statement ps = MysqlConnetionPool.getConnection(this.ci).createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+			ResultSet resultSet = ps.executeQuery("select count(1) from " + table);
+
+			resultSet.next();
+
+			Long count = (Long) resultSet.getObject(1);
+			try {
+				ps.close();
+			} catch (Exception localException1) {
+			}
+			try {
+				resultSet.close();
+			} catch (Exception localException2) {
+			}
+			return count.intValue();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	public DataRecord getDataRecordByKey(String table, DataRecord dr) {
+		SelectSQL sql = new SelectSQL();
+		sql.addTable(table);
+		for (String key : getPrimaryKeyMetaData(table)) {
+			sql.addWhereCondition(key, dr.getFieldValue(key));
+		}
+
+		DataIterator it = select(sql, 1);
+		DataRecord result = null;
+		if (it.hasNext()) {
+			result = (DataRecord) it.next();
+		}
+
+		it.close();
+
+		return result;
+	}
+
+	public DataRecord getDataRecordByCondition(String table, DataRecord dr) {
+		SelectSQL sql = new SelectSQL();
+		sql.addTable(table);
+		for (String key : dr.getAllFields()) {
+			sql.addWhereCondition(key, dr.getFieldValue(key));
+		}
+
+		DataIterator it = select(sql, 1);
+		DataRecord result = null;
+		if (it.hasNext()) {
+			result = (DataRecord) it.next();
+		}
+
+		it.close();
+
+		return result;
+	}
+
+	private DataIterator<DataRecord> selectSql(final String sql) {
+		return new DataIterator<DataRecord>() {
 			private ResultSet resultSet;
 			private Statement ps;
 			private ResultSetMetaData meta;
-
+			
 			{
-				try {
-					ps = connection.createStatement();
-					resultSet = ps.executeQuery(sql);
-					resultSet.setFetchSize(100);
-					meta = resultSet.getMetaData();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					if (ps != null)
-						try {
-							ps.close();
-						} catch (SQLException e1) {
-							e.printStackTrace();
-						}
-				}
+				initial();
+			}
 
+			private void initial() {
+				try {
+					this.ps = MysqlConnetionPool.getConnection(MysqlHandler.this.ci).createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+					this.resultSet = this.ps.executeQuery(sql);
+					this.meta = this.resultSet.getMetaData();
+				} catch (Exception e) {
+					close();
+					throw new DataException(MysqlHandler.this.ci + " Failed to initial sql '" + sql + "'\n"
+							+ ExceptionUtil.getExceptionContent(e));
+				}
+			}
+
+			public void close() {
+				if (this.ps != null)
+					try {
+						this.ps.close();
+					} catch (SQLException localSQLException) {
+					}
+				if (this.resultSet == null)
+					return;
+				try {
+					this.resultSet.close();
+				} catch (SQLException localSQLException1) {
+				}
 			}
 
 			public boolean hasNext() {
 				try {
 					boolean has = this.resultSet.next();
 					this.resultSet.previous();
-					if (!(has)) {
-						this.ps.close();
-					}
 					return has;
-				} catch (SQLException e) {
-					try {
-						if (this.ps != null)
-							this.ps.close();
-					} catch (SQLException localSQLException1) {
-					}
+				} catch (Exception e) {
+					throw new DataException(MysqlHandler.this.ci + " Failed to get whether there is next record.\n"
+							+ ExceptionUtil.getExceptionContent(e));
 				}
-				return false;
 			}
 
 			public DataRecord next() {
@@ -75,113 +178,373 @@ public class MysqlHandler {
 					this.resultSet.next();
 					DataRecord dr = new DataRecord();
 					for (int i = 1; i <= this.meta.getColumnCount(); ++i) {
-						dr.AddField(this.meta.getColumnName(i),
-								String.valueOf(this.resultSet.getObject(this.meta.getColumnName(i))));
+						Object v = this.resultSet.getObject(this.meta.getColumnName(i));
+						String field = this.meta.getColumnName(i);
+						if (v == null) {
+							v = "";
+						}
+						dr.AddField(field, String.valueOf(v));
 					}
 					return dr;
 				} catch (Exception e) {
-					e.printStackTrace();
+					throw new DataException(MysqlHandler.this.ci + " Failed to get next record.\n"
+							+ ExceptionUtil.getExceptionContent(e));
 				}
-
-				return null;
 			}
 
-			public void remove() {
-				if (this.ps == null)
-					return;
-				try {
-					this.ps.close();
-				} catch (SQLException localSQLException) {
-				}
+			public void reset() {
+				close();
+				initial();
 			}
 		};
 	}
 
-	public IEditor editor(final String table) {
+	private List<SelectSQL> getResolvedSQL(SelectSQL sql, int fetchSize) {
+		List list = new ArrayList();
+        if(sql != null && fetchSize > 0)
+        {
+            if(!StringUtil.isNullOrEmpty(sql.getSql()))
+            {
+                list.add(sql);
+                return list;
+            }
+            SelectSQL newSql = sql.clone();
+            newSql.getFields().clear();
+            newSql.addField("count(*)");
+            newSql.setLimit(new LimitSQL());
+            DataIterator it = selectSql(newSql.getSQLString(com.asura.tools.sql.ISQL.DBType.mysql));
+            int all = 0;
+            if(it.hasNext())
+                all = getCount((DataRecord)it.next());
+            it.close();
+            int start = 0;
+            int count = 0;
+            if(sql.getLimit() != null)
+            {
+                start = sql.getLimit().getStart();
+                count = sql.getLimit().getCount();
+            }
+            int page = 1;
+            if(count == 0)
+            {
+                int totalStart = start;
+                do
+                {
+                    newSql = sql.clone();
+                    newSql.setLimitStart(totalStart);
+                    if(totalStart >= all)
+                        break;
+                    newSql.setLimitCount(fetchSize);
+                    list.add(newSql);
+                    totalStart = fetchSize * page++ + start;
+                } while(true);
+            } else
+            {
+                int max = start + count;
+                for(int totalStart = start; totalStart < max; totalStart = fetchSize * page++ + start)
+                {
+                    newSql = sql.clone();
+                    newSql.setLimitStart(totalStart);
+                    if(totalStart >= all)
+                        break;
+                    newSql.setLimitCount(Math.min(fetchSize, max - totalStart));
+                    list.add(newSql);
+                }
+
+            }
+        }
+        return list;
+
+	}
+
+	private int getCount(DataRecord dr) {
+		try {
+			return Integer.valueOf(dr.getFieldValue(dr.getAllFields()[0])).intValue();
+		} catch (Exception e) {
+		}
+		return 0;
+	}
+
+	public List<DataRecord> selectList(SelectSQL sql) {
+		List list = new ArrayList();
+		DataIterator it = select(sql);
+		while (it.hasNext()) {
+			list.add((DataRecord) it.next());
+		}
+		it.close();
+
+		return list;
+	}
+
+	public List<DataRecord> selectListDirectly(SelectSQL sql) {
+		List list = new ArrayList();
+		DataIterator it = selectDirectly(sql);
+		while (it.hasNext()) {
+			list.add((DataRecord) it.next());
+		}
+		it.close();
+
+		return list;
+	}
+
+	public DataIterator<DataRecord> selectDirectly(final SelectSQL sql) {
+		final List list = new ArrayList();
+		list.add(sql);
+
+		if (list.size() == 0) {
+			return new EmptyDataIterator();
+		}
+
+		return new DataIterator<DataRecord>() {
+			private int pos;
+			private DataIterator<DataRecord> currentIt;
+			
+			{
+				pos=0;
+				currentIt = selectSql(((SelectSQL)list.get(0)).getSQLString());
+
+			}
+
+			public void close() {
+				this.currentIt.close();
+			}
+
+			public boolean hasNext() {
+				if (this.currentIt.hasNext()) {
+					return this.currentIt.hasNext();
+				}
+				if (this.pos < list.size() - 1) {
+					this.pos += 1;
+					this.currentIt.close();
+					this.currentIt = MysqlHandler.this
+							.selectSql(((SelectSQL) list.get(this.pos)).getSQLString());
+
+					return hasNext();
+				}
+				this.currentIt.close();
+				return false;
+			}
+
+			public DataRecord next() {
+				return ((DataRecord) this.currentIt.next());
+			}
+
+			public void reset() {
+				this.pos = 0;
+				this.currentIt.close();
+				this.currentIt = MysqlHandler.this.selectSql(((SelectSQL) list.get(this.pos)).getSQLString());
+			}
+		};
+	}
+
+	public DataIterator<DataRecord> select(SelectSQL sql, int fetchSize) {
+		if (sql == null) {
+			return new EmptyDataIterator();
+		}
+		final List list = getResolvedSQL(sql, fetchSize);
+
+		if (list.size() == 0) {
+			return new EmptyDataIterator();
+		}
+
+		return new DataIterator<DataRecord>() {
+			private int pos;
+			private DataIterator<DataRecord> currentIt;
+			
+			{
+				pos = 0;
+				currentIt = selectSql(((SelectSQL) list.get(0)).getSQLString());
+
+			}
+
+			public void close() {
+				this.currentIt.close();
+			}
+
+			public boolean hasNext() {
+				if (this.currentIt.hasNext()) {
+					return this.currentIt.hasNext();
+				}
+				if (this.pos < list.size() - 1) {
+					this.pos += 1;
+					this.currentIt.close();
+					this.currentIt = MysqlHandler.this
+							.selectSql(((SelectSQL) list.get(this.pos)).getSQLString());
+
+					return hasNext();
+				}
+				this.currentIt.close();
+				return false;
+			}
+
+			public DataRecord next() {
+				return ((DataRecord) this.currentIt.next());
+			}
+
+			public void reset() {
+				this.pos = 0;
+				this.currentIt.close();
+				this.currentIt = MysqlHandler.this.selectSql(((SelectSQL) list.get(this.pos)).getSQLString());
+			}
+		};
+	}
+
+	public IEditor editor(String table) {
+		return editor(table, false);
+	}
+
+	public IEditor editorOnlyTransaction(String table) {
+		return editor(table, true);
+	}
+
+	private IEditor editor(final String table, final boolean newCon) {
 		return new IEditor() {
-			public void begineTransaction() {
+			private Connection con;
+			
+			{
+				initial();
+			}
+
+			private void initial() {
+				if (newCon)
+					this.con = MysqlConnetionPool.getNewConnection(MysqlHandler.this.ci);
+				else
+					this.con = MysqlConnetionPool.getConnection(MysqlHandler.this.ci);
+			}
+
+			public void addRecord(DataRecord dr) {
+				addRecord(dr, false);
+			}
+
+			public void addRecords(List<DataRecord> records, boolean override) {
+				if (records.size() <= 0)
+					return;
+				Connection con = MysqlConnetionPool.getNewConnection(MysqlHandler.this.ci);
 				try {
-					MysqlHandler.this.connection.setAutoCommit(false);
-				} catch (SQLException e) {
-					e.printStackTrace();
+					con.setAutoCommit(false);
+
+					for (DataRecord dr : records) {
+						addRecord(dr, override, con);
+					}
+
+					con.commit();
+					con.close();
+				} catch (Exception e) {
+					throw new DataException(MysqlHandler.this.ci + " Failed to add record '" + records.size() + "'"
+							+ ExceptionUtil.getExceptionContent(e));
+				} finally {
+					try {
+						con.close();
+					} catch (SQLException localSQLException) {
+					}
 				}
 			}
 
-			public void commit() {
-				try {
-					MysqlHandler.this.connection.commit();
-					MysqlHandler.this.connection.setAutoCommit(true);
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			public void updateRecord(DataRecord dr) {
-				if (dr.getAllFields().length > 0) {
-					String sql = "update  " + table + MysqlHandler.this.getSetString(dr, table)
-							+ MysqlHandler.this.getWhereString(dr, table);
+			private void addRecord(DataRecord dr, boolean override, Connection con) {
+				if ((dr != null) && (dr.getAllFields().length > 0)) {
+					InsertSQL insert = new InsertSQL();
+					insert.addTable(table);
+					if (override) {
+						insert.setIgnore(false);
+						insert.setOverride(true);
+					} else {
+						insert.setIgnore(true);
+						insert.setOverride(false);
+					}
+					insert.addFieldValue(dr);
+					String sql = insert.getSQLString(ISQL.DBType.mysql);
 
 					PreparedStatement ps = null;
 					try {
-						ps = MysqlHandler.this.connection.prepareStatement(sql, 1008);
-						ps.executeUpdate();
+						ps = con.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+
+						ps.execute(sql);
 						ps.close();
-					} catch (SQLException e) {
-						e.printStackTrace();
+					} catch (Exception e) {
+						con = MysqlConnetionPool.getConnection(MysqlHandler.this.ci);
+						try {
+							ps = con.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+							ps.execute(sql);
+							ps.close();
+						} catch (Exception e1) {
+							throw new DataException(MysqlHandler.this.ci + " Failed to add record '" + sql + "'"
+									+ ExceptionUtil.getExceptionContent(e));
+						}
 					} finally {
 						if (ps != null)
 							try {
 								ps.close();
-							} catch (SQLException localSQLException2) {
+							} catch (SQLException localSQLException1) {
 							}
 					}
 				}
 			}
 
 			public void addRecord(DataRecord dr, boolean override) {
-				if ((containsRecord(dr)) && (override)) {
-					deleteRecord(dr);
-				}
-				addRecord(dr);
+				addRecord(dr, override, this.con);
 			}
 
-			public void addRecord(DataRecord dr) {
-				if (dr.getAllFields().length > 0) {
-					String sql = MysqlHandler.this.getInsertString(dr, table);
-
-					PreparedStatement ps = null;
-					try {
-						ps = MysqlHandler.this.connection.prepareStatement(sql, 1008);
-						ps.execute(sql);
-						ps.close();
-					} catch (SQLException e) {
-						e.printStackTrace();
-					} finally {
-						if (ps != null)
-							try {
-								ps.close();
-							} catch (SQLException localSQLException2) {
-							}
-					}
+			public void begineTransaction() {
+				try {
+					this.con.setAutoCommit(false);
+				} catch (SQLException e) {
+					throw new DataException(MysqlHandler.this.ci + " Failed to begin transactoin "
+							+ ExceptionUtil.getExceptionContent(e));
 				}
+			}
+
+			public void commit() {
+				try {
+					this.con.commit();
+					this.con.setAutoCommit(true);
+					this.con.close();
+				} catch (SQLException e) {
+					throw new DataException(MysqlHandler.this.ci + " Failed to commite transactoin "
+							+ ExceptionUtil.getExceptionContent(e));
+				}
+			}
+
+			public boolean containsRecord(DataRecord dr) {
+				if ((dr != null) && (dr.getAllFields().length > 0)) {
+					SelectSQL sql = new SelectSQL();
+					sql.addTable(table);
+
+					for (String key : MysqlHandler.this.getPrimaryKeyMetaData(table)) {
+						sql.addWhereCondition(key, dr.getFieldValue(key));
+					}
+
+					sql.setLimitCount(1);
+
+					DataIterator it = MysqlHandler.this.select(sql, 1);
+					boolean contains = it.hasNext();
+					it.close();
+
+					return contains;
+				}
+				return false;
 			}
 
 			public void deleteRecord(DataRecord dr) {
-				if (dr.getAllFields().length > 0) {
-					String sql = "delete from " + table + MysqlHandler.this.getWhereString(dr, table);
+				if ((dr != null) && (dr.getAllFields().length > 0)) {
+					DeleteSQL delete = new DeleteSQL();
+					delete.addTable(table);
+					for (String key : MysqlHandler.this.getPrimaryKeyMetaData(table)) {
+						delete.addWhereCondition(key, dr.getFieldValue(key));
+					}
 
 					PreparedStatement ps = null;
 					try {
-						ps = MysqlHandler.this.connection.prepareStatement(sql, 1008);
-						ps.execute(sql);
+						ps = this.con.prepareStatement(delete.getSQLString(ISQL.DBType.mysql), ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+						ps.execute(delete.getSQLString(ISQL.DBType.mysql));
 						ps.close();
 					} catch (SQLException e) {
-						e.printStackTrace();
+						throw new DataException(MysqlHandler.this.ci + " Failed to delete record '"
+								+ delete.getSQLString(ISQL.DBType.mysql) + "'" + ExceptionUtil.getExceptionContent(e));
 					} finally {
 						if (ps != null)
 							try {
 								ps.close();
-							} catch (SQLException localSQLException2) {
+							} catch (SQLException localSQLException3) {
 							}
 					}
 				}
@@ -200,90 +563,140 @@ public class MysqlHandler {
 				}
 			}
 
-			public boolean containsRecord(DataRecord dr) {
-				String sql = "select * from  " + table + MysqlHandler.this.getWhereString(dr, table);
-				Iterator it = MysqlHandler.this.iterator(sql);
-				boolean contains = false;
-				if (it.hasNext()) {
-					contains = true;
-				}
-				it.remove();
+			public void updateRecord(DataRecord dr) {
+				if ((dr != null) && (dr.getAllFields().length > 0)) {
+					UpdateSQL update = new UpdateSQL();
+					update.addTable(table);
+					update.addFieldValues(dr);
+					for (String key : MysqlHandler.this.getPrimaryKeyMetaData(table)) {
+						update.addWhereCondition(key, dr.getFieldValue(key));
+					}
+					String sql = update.getSQLString(ISQL.DBType.mysql);
 
-				return contains;
+					PreparedStatement ps = null;
+					try {
+						ps = this.con.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+						ps.executeUpdate();
+						ps.close();
+					} catch (SQLException e) {
+						throw new DataException(MysqlHandler.this.ci + " Failed to update record '" + sql + "'"
+								+ ExceptionUtil.getExceptionContent(e));
+					} finally {
+						if (ps != null)
+							try {
+								ps.close();
+							} catch (SQLException localSQLException1) {
+							}
+					}
+				}
 			}
 
 			public void addRecords(List<DataRecord> drs) {
-			}
-
-			public void addRecords(List<DataRecord> drs, boolean override) {
+				addRecords(drs, false);
 			}
 
 			public void deleteRecords(List<DataRecord> drs) {
+				if (drs.size() > 0) {
+					PreparedStatement ps = null;
+					Connection con = MysqlConnetionPool.getNewConnection(MysqlHandler.this.ci);
+					try {
+						con.setAutoCommit(false);
+						ps = con.prepareStatement("select 1", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+						for (DataRecord dr : drs) {
+							DeleteSQL delete = new DeleteSQL();
+							delete.addTable(table);
+							for (String key : MysqlHandler.this.getPrimaryKeyMetaData(table)) {
+								delete.addWhereCondition(key, dr.getFieldValue(key));
+							}
+							String sql = delete.getSQLString(ISQL.DBType.mysql);
+							ps.addBatch(sql);
+						}
+
+						ps.executeBatch();
+						ps.close();
+						con.commit();
+						con.close();
+					} catch (Exception e) {
+						throw new DataException(MysqlHandler.this.ci + " Failed to delete record '" + drs.size() + "'"
+								+ ExceptionUtil.getExceptionContent(e));
+					} finally {
+						if (ps != null)
+							try {
+								ps.close();
+							} catch (SQLException localSQLException) {
+							}
+					}
+				}
 			}
 
 			public void execute(String sql) {
+				PreparedStatement ps = null;
+				try {
+					ps = this.con.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+					ps.execute();
+					ps.close();
+				} catch (SQLException e) {
+					throw new DataException(MysqlHandler.this.ci + " Failed to execute sql '" + sql + "'"
+							+ ExceptionUtil.getExceptionContent(e));
+				} finally {
+					if (ps != null)
+						try {
+							ps.close();
+						} catch (SQLException localSQLException1) {
+						}
+				}
 			}
 		};
 	}
 
-	private String getValidValue(String value) {
-		if (value == null) {
-			return "";
-		}
-
-		return value.replace("'", "\\'").replace("\"", "\\\"");
+	public DataIterator<DataRecord> select(SelectSQL sql) {
+		return select(sql, 100000);
 	}
 
-	private String getInsertString(DataRecord dr, String table) {
-		if (dr.getAllFields().length > 0) {
-			StringBuffer fields = new StringBuffer();
-			for (String s : dr.getAllFields()) {
-				fields.append(s + ",");
+	public DataRecord getRecordByKey(String table, DataRecord dr) {
+		SelectSQL sql = new SelectSQL();
+		sql.addTable(table);
+		for (String field : getPrimaryKeyMetaData(table)) {
+			String value = dr.getFieldValue(field);
+			if (!(StringUtil.isNullOrEmpty(value))) {
+				sql.addWhereCondition(field, value);
 			}
-			fields.deleteCharAt(fields.length() - 1);
-
-			StringBuffer values = new StringBuffer();
-			for (String s : dr.getAllFields()) {
-				values.append("'" + getValidValue(dr.getFieldValue(s)) + "',");
-			}
-			values.deleteCharAt(values.length() - 1);
-
-			return "insert into " + table + "(" + fields.toString() + ") values(" + values.toString() + ")";
 		}
-		return "";
+		sql.setLimitCount(1);
+		DataIterator it = select(sql);
+		DataRecord result = null;
+		if (it.hasNext()) {
+			result = (DataRecord) it.next();
+		}
+		it.close();
+
+		return result;
 	}
 
-	private String getWhereString(DataRecord dr, String table) {
-		String[] ks = getPrimaryKeyMetaData(table);
-		StringBuffer values = new StringBuffer();
-		for (String s : ks) {
-			values.append(s + "='" + getValidValue(dr.getFieldValue(s)) + "' and ");
-		}
-
-		if (values.length() == 0) {
-			return "";
-		}
-
-		return " where " + values.toString().substring(0, values.length() - 4) + " ";
-	}
-
-	private String getSetString(DataRecord dr, String table) {
-		StringBuffer values = new StringBuffer();
-		for (String s : dr.getAllFields()) {
-			values.append(s + "='" + getValidValue(dr.getFieldValue(s)) + "',");
-		}
-
-		if (values.length() == 0) {
-			return "";
-		}
-
-		return " set " + values.toString().substring(0, values.length() - 1) + " ";
-	}
-
-	private String[] getPrimaryKeyMetaData(String tableName) {
+	public String[] getTables() {
 		ArrayList list = new ArrayList();
 		try {
-			DatabaseMetaData meta = this.connection.getMetaData();
+			DatabaseMetaData meta = MysqlConnetionPool.getConnection(this.ci).getMetaData();
+
+			ResultSet rs = meta.getTables(null, null, null, new String[] { "TABLE" });
+			while (rs.next()) {
+				list.add(rs.getString(3));
+			}
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return ((String[]) list.toArray(new String[0]));
+	}
+
+	public String[] getPrimaryKeyMetaData(String tableName) {
+		if (keyCache.containsKey(this.ci.getDbName() + tableName)) {
+			return ((String[]) keyCache.get(this.ci.getDbName() + tableName));
+		}
+		ArrayList list = new ArrayList();
+		try {
+			DatabaseMetaData meta = MysqlConnetionPool.getConnection(this.ci).getMetaData();
 
 			ResultSet rs = meta.getPrimaryKeys(null, null, tableName);
 			while (rs.next()) {
@@ -294,26 +707,26 @@ public class MysqlHandler {
 			e.printStackTrace();
 		}
 
+		keyCache.put(this.ci.getDbName() + tableName, (String[]) list.toArray(new String[0]));
 		return ((String[]) list.toArray(new String[0]));
 	}
 
-	public boolean containsRecord(String table, DataRecord dr) {
-		String sql = "select * from  " + table + getWhereString(dr, table);
-		Iterator it = iterator(sql);
-		boolean contains = false;
-		if (it.hasNext()) {
-			contains = true;
-		}
-		it.remove();
-
-		return contains;
-	}
-
-	public void close() {
+	public void execute(String sql) {
+		PreparedStatement ps = null;
 		try {
-			if (this.connection != null)
-				this.connection.close();
-		} catch (SQLException localSQLException) {
+			ps = MysqlConnetionPool.getConnection(this.ci).prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			ps.execute();
+			ps.close();
+		} catch (SQLException e) {
+			throw new DataException(
+					this.ci + " Failed to execute sql '" + sql + "'" + ExceptionUtil.getExceptionContent(e));
+		} finally {
+			if (ps != null)
+				try {
+					ps.close();
+				} catch (SQLException localSQLException1) {
+				}
 		}
 	}
+
 }

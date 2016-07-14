@@ -6,7 +6,27 @@ public interface DTask extends Runnable{
 	
 	public String getName();
 	
+	public void setName(String name);
+	
+	public void setContext(DTaskContext context);
+	
+	public void setGroup(String group);
+	
+	public String getGroup();
+	
+	public DTaskContext getContext();
+	
+	public String getDesc();
+	
+	public void setDesc(String desc);
+	
+	public void setDependency(String[] dependencies);
+	
+	public String[] getDependency();
+	
 	public void setDtaskMessager(DTaskMessager messager);
+	
+	public DTaskMessager getDtaskMessager();
 	
 	public String getSuccessMessage();
 	

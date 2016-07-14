@@ -6,8 +6,8 @@ import java.util.List;
 
 import com.asura.tools.data.DataIterator;
 import com.asura.tools.data.DataRecord;
-import com.asura.tools.data.newmysql.ConnectionInformation;
-import com.asura.tools.data.newmysql.MysqlHandler;
+import com.asura.tools.data.mysql.ConnectionInformation;
+import com.asura.tools.data.mysql.MysqlHandler;
 import com.asura.tools.sql.SelectSQL;
 import com.asura.tools.util.CommonSpliter;
 import com.asura.tools.util.FileUtil;

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.asura.tools.data.DataException;
-import com.asura.tools.data.newmysql.ConnectionInformation;
+import com.asura.tools.data.mysql.ConnectionInformation;
 import com.asura.tools.util.ExceptionUtil;
 import com.asura.tools.util.StringUtil;
 import com.mongodb.ServerAddress;

@@ -14,7 +14,7 @@ public class TestRChandlerAnnotation {
 	public void test() throws Exception {
 		
 		RCHandlerAnnotationParserFactory factory=new AnnotationParserFactoryBuilder.Builder<RCHandlerAnnotationParserFactory>("com.asura.tools.annotation.handler").build(RCHandler.class, new RCHandlerAnnotationParserFactory());
-		DataRecord record=factory.getResChainHandler("shendiao").process(new DataRecord());
+		DataRecord record=factory.getResChainHandler("shendiao").process(new DataRecord(),null);
 		for(String field:record.getAllFields()){
 			System.out.println(field+":"+record.getFieldValue(field));
 		}

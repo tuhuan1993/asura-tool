@@ -1,11 +1,11 @@
-package com.asura.tools.data.newmysql;
+package com.asura.tools.data.mysql;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.asura.tools.data.DataIterator;
 import com.asura.tools.data.DataRecord;
-import com.asura.tools.data.newmysql.TableLock.Status;
+import com.asura.tools.data.mysql.TableLock.Status;
 import com.asura.tools.sql.SelectSQL;
 import com.asura.tools.util.StringUtil;
 

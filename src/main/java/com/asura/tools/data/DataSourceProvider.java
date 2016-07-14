@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.asura.tools.data.mongo.MongoConnection;
 import com.asura.tools.data.mongo.MongoHandler;
-import com.asura.tools.data.newmysql.ConnectionInformation;
-import com.asura.tools.data.newmysql.MysqlHandler;
+import com.asura.tools.data.mysql.ConnectionInformation;
+import com.asura.tools.data.mysql.MysqlHandler;
 import com.asura.tools.data.oracle.OracleHandler;
 import com.asura.tools.sql.SelectSQL;
 import com.asura.tools.util.cache.SimpleCache;
