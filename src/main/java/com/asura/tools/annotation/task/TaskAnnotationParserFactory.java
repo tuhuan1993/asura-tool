@@ -2,6 +2,7 @@ package com.asura.tools.annotation.task;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -49,65 +50,78 @@ public class TaskAnnotationParserFactory implements AnnotationParserFactory {
 			if (dMap.get(taskDef.group()).get(taskDef.name()) == null) {
 				dMap.get(taskDef.group()).put(taskDef.name(), new HashSet<String>());
 			}
-			for(String dependency:taskDef.dependency()){
+			for (String dependency : taskDef.dependency()) {
 				if (StringUtils.isNotBlank(dependency)) {
 					dMap.get(taskDef.group()).get(taskDef.name()).add(dependency);
 				}
 			}
-			
+
 		}
 
 	}
 
-	public DTaskGraph getTaskGraph(String group, DTaskMessager messager, DTaskContext context) {
-		DTaskGraph graph=new DTaskGraph();
-		if(dMap.get(group)==null){
-			throw new RuntimeException("group doesn't exist-"+group);
+	public Set<String> getTaskGroups() {
+		return dMap.keySet();
+	}
+
+	public Set<String> getTaskNames(String group) {
+		if (dMap.containsKey(group)) {
+			return dMap.get(group).keySet();
+		} else {
+			return new HashSet<>();
 		}
-		for(Entry<String, Set<String>> entry:dMap.get(group).entrySet()){
-			DTask db=taskMap.get(group).get(entry.getKey());
+	}
+
+	public DTaskGraph getTaskGraph(String group, DTaskMessager messager, DTaskContext context) {
+		DTaskGraph graph = new DTaskGraph(group);
+		if (dMap.get(group) == null) {
+			throw new RuntimeException("group doesn't exist-" + group);
+		}
+		for (Entry<String, Set<String>> entry : dMap.get(group).entrySet()) {
+			DTask db = taskMap.get(group).get(entry.getKey());
 			db.setDtaskMessager(messager);
 			db.setContext(context);
-			if(entry.getValue().size()>0){
-				for(String dependency:entry.getValue()){
-					DTask dd=taskMap.get(group).get(dependency);
+			if (entry.getValue().size() > 0) {
+				for (String dependency : entry.getValue()) {
+					DTask dd = taskMap.get(group).get(dependency);
 					dd.setDtaskMessager(messager);
 					dd.setContext(context);
 					graph.insert(db, dd);
 				}
-			}else{
+			} else {
 				graph.insert(db);
 			}
 		}
 		return graph;
 	}
 
-	public DTaskGraph getTaskGraph(String group, String taskName, DTaskMessager messager, DTaskContext context, boolean isStandAlone) {
-		DTaskGraph graph=new DTaskGraph();
-		if(dMap.get(group)==null){
-			throw new RuntimeException("group doesn't exist-"+group);
+	public DTaskGraph getTaskGraph(String group, String taskName, DTaskMessager messager, DTaskContext context,
+			boolean isStandAlone) {
+		DTaskGraph graph = new DTaskGraph(group);
+		if (dMap.get(group) == null) {
+			throw new RuntimeException("group doesn't exist-" + group);
 		}
-		if(dMap.get(group).get(taskName)==null){
-			throw new RuntimeException("taskname doesn't exist-"+group+":"+taskName);
+		if (dMap.get(group).get(taskName) == null) {
+			throw new RuntimeException("taskname doesn't exist-" + group + ":" + taskName);
 		}
-		DTask db=taskMap.get(group).get(taskName);
+		DTask db = taskMap.get(group).get(taskName);
 		db.setDtaskMessager(messager);
 		db.setContext(context);
-		if(isStandAlone){
+		if (isStandAlone) {
 			graph.insert(db);
-		}else{
-			if(dMap.get(group).get(taskName).size()>0){
-				for(String dependency:dMap.get(group).get(taskName)){
-					DTask dd=taskMap.get(group).get(dependency);
+		} else {
+			if (dMap.get(group).get(taskName).size() > 0) {
+				for (String dependency : dMap.get(group).get(taskName)) {
+					DTask dd = taskMap.get(group).get(dependency);
 					dd.setDtaskMessager(messager);
 					dd.setContext(context);
 					graph.insert(db, dd);
 				}
-			}else{
+			} else {
 				graph.insert(db);
 			}
 		}
-		
+
 		return graph;
 	}
 

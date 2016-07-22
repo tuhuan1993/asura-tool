@@ -64,7 +64,7 @@ public class DateUtil {
 	}
 
 	public static Date getDateFromString(String date, String format, Locale locale) {
-		SimpleDateFormat sf = new SimpleDateFormat("format", locale);
+		SimpleDateFormat sf = new SimpleDateFormat(format, locale);
 		try {
 			return sf.parse(date);
 		} catch (ParseException e) {

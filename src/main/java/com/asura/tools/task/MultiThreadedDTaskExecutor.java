@@ -8,20 +8,21 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.asura.tools.task.DTask.STATE;
 import com.asura.tools.task.exception.DependencyDoesNotExistException;
 import com.asura.tools.task.imp.DefaultDTaskMessager;
-import com.asura.tools.task.imp.DefaultDtaskExecutorTracer;
 import com.asura.tools.task.imp.DefaultDtaskGraphListener;
 
 public class MultiThreadedDTaskExecutor implements DTaskExecutor {
+	
+	private final static Logger logger=LoggerFactory.getLogger(MultiThreadedDTaskExecutor.class);
 
 	private final ExecutorService taskPool;
 
 	private final ExecutorService managePool;
-
-	private DTaskExecutorTracer tracer=new DefaultDtaskExecutorTracer();
-
-	private DTaskMessager messager=new DefaultDTaskMessager();
 
 	private ConcurrentMap<DTaskGraph, Runner> map = new ConcurrentHashMap<>();
 
@@ -68,16 +69,6 @@ public class MultiThreadedDTaskExecutor implements DTaskExecutor {
 	}
 
 	@Override
-	public void setExecutorTracer(DTaskExecutorTracer tracer) {
-		this.tracer = tracer;
-	}
-
-	@Override
-	public void setTaskMessager(DTaskMessager messager) {
-		this.messager = messager;
-	}
-
-	@Override
 	public void submit(DTaskGraph taskGraph, DTaskGraphListener listerner)
 			throws InterruptedException, DependencyDoesNotExistException {
 		taskGraph.verifyValidGraph();
@@ -116,23 +107,22 @@ public class MultiThreadedDTaskExecutor implements DTaskExecutor {
 				while (true) {
 					while (taskGraph.hasNextRunnalbeDTask()) {
 						DTask t = taskGraph.nextRunnableDTask();
-						t.setDtaskMessager(messager);
 						DTaskWrapper wrapper = new DTaskWrapper(t, completionQueue);
 						currentlyExecuting++;
-						tracer.trace(t, "start");
+						listener.traceStatus(taskGraph, t, STATE.START);
 						taskPool.execute(wrapper);
 					}
 					if (currentlyExecuting > 0) {
 						do {
 							DTaskWrapper rw = completionQueue.take();
 							currentlyExecuting--;
-							tracer.trace(rw.innerTask, "finished");
+							listener.traceStatus(taskGraph, rw.innerTask, STATE.STOP);
 							if (rw.getErr() == null) {
 								taskGraph.notifyDone(rw.innerTask);
-								tracer.trace(rw.innerTask, "noerror");
+								listener.traceStatus(taskGraph, rw.innerTask, STATE.SUCCESS);
 							} else {
 								taskGraph.notifyError(rw.innerTask, rw.err);
-								tracer.trace(rw.innerTask, "error");
+								listener.traceStatus(taskGraph, rw.innerTask, STATE.ERROR);
 							}
 						} while (!completionQueue.isEmpty());
 					}
@@ -170,6 +160,7 @@ public class MultiThreadedDTaskExecutor implements DTaskExecutor {
 				innerTask.run();
 			} catch (Throwable exception) {
 				err = exception;
+				logger.error("exception happened when run task "+innerTask.getGroup()+":"+innerTask.getName(), err);
 			} finally {
 				completionQueue.add(this);
 			}

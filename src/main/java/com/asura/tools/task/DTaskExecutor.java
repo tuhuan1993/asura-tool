@@ -19,11 +19,7 @@ public interface DTaskExecutor {
 	public boolean isShutdown();
 
 	public boolean isTerminated();
-	
-	public void setExecutorTracer(DTaskExecutorTracer tracer);
-	
-	public void setTaskMessager(DTaskMessager messager);
-	
+			
 	public void waitDTaskGraphCompleted(DTaskGraph taskGraph) throws InterruptedException;
 
 }

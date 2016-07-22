@@ -23,12 +23,7 @@ import javax.imageio.ImageIO;
 import com.asura.tools.util.Combination;
 import com.asura.tools.util.FileUtil;
 import com.asura.tools.util.HttpUtil;
-import com.asura.tools.util.image.SimilarUtil.ImageHelper;
 import com.asura.tools.util.math.Probability;
-import com.sun.image.codec.jpeg.ImageFormatException;
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGImageDecoder;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
 public class SimilarUtil {
 	public static final int SAMEVALUE = 5;
@@ -231,11 +226,9 @@ public class SimilarUtil {
 				g.setComposite(AlphaComposite.getInstance(10, alpha));
 				g.drawImage(src_biao, x, y, null);
 				g.dispose();
-
-				FileOutputStream out = new FileOutputStream(imgPath);
-				JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
-				encoder.encode(image);
-				out.close();
+				
+				String formatName = imgPath.substring(imgPath.lastIndexOf(".") + 1);  
+				ImageIO.write(image, formatName, new File(imgPath));  
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -256,10 +249,8 @@ public class SimilarUtil {
 				g.setComposite(AlphaComposite.getInstance(10, alpha));
 				g.drawString(text, x, y);
 				g.dispose();
-				FileOutputStream out = new FileOutputStream(imgPath);
-				JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
-				encoder.encode(image);
-				out.close();
+				String formatName = imgPath.substring(imgPath.lastIndexOf(".") + 1);  
+				ImageIO.write(image, formatName, new File(imgPath));  
 			} catch (Exception e) {
 				System.out.println(e);
 			}
@@ -268,17 +259,12 @@ public class SimilarUtil {
 		public static BufferedImage readJPEGImage(String filename) {
 			try {
 				InputStream imageIn = new FileInputStream(new File(filename));
+				
+				return ImageIO.read(imageIn);
 
-				JPEGImageDecoder decoder = JPEGCodec.createJPEGDecoder(imageIn);
-
-				BufferedImage sourceImage = decoder.decodeAsBufferedImage();
-
-				return sourceImage;
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
-			} catch (ImageFormatException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
+			}catch (IOException e) {
 				e.printStackTrace();
 			}
 
@@ -291,8 +277,6 @@ public class SimilarUtil {
 				BufferedImage sourceImage = ImageIO.read(inputFile);
 				return sourceImage;
 			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (ImageFormatException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();

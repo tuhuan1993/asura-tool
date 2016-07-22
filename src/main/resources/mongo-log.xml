@@ -1,0 +1,5 @@
+<mongo-log-info>
+  <host>127.0.0.1</host>
+  <db-name>logdata</db-name>
+  <collection-name>log</collection-name>
+</mongo-log-info>

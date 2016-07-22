@@ -38,4 +38,20 @@ public interface DTask extends Runnable{
 	
 	public boolean isError();
 	
+	public enum STATE{
+		START("started"),
+		STOP("stopped"),
+		ERROR("error"),
+		SUCCESS("succeed");
+		
+		private String desc;
+		private STATE(String desc) {
+			this.desc=desc;
+		}
+		
+		public String toString(){
+			return this.desc;
+		}
+	}
+	
 }
