@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con-info>
+	<!-- <host>58.215.65.52</host>
+	<port>3306</port>
+	<db-name>appsearch</db-name>
+	<user>root</user>
+	<password>2010GetAFan</password> -->
+	
+	
+	<host>127.0.0.1</host>
+	<port>3306</port>
+	<db-name>searchdata</db-name>
+	<user>niefei</user>
+	<password>niefei</password>
+</con-info>

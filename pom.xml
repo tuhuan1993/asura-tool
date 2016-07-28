@@ -158,5 +158,39 @@
 				</configuration>
 			</plugin>
 		</plugins>
+
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/*.properties</include>
+				</includes>
+				<filtering>false</filtering>
+			</resource>
+
+			<resource>
+				<directory>src/main/resources/</directory>
+				<includes>
+					<include>**/*.xml</include>
+				</includes>
+				<excludes>
+					<exclude>connection.xml</exclude>
+					<exclude>log4j.xml</exclude>
+					<exclude>mongo-log.xml</exclude>
+				</excludes>
+				<filtering>false</filtering>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<targetPath>./../../target/commonResources</targetPath>
+				<includes>
+					<include>connection.xml</include>
+					<include>log4j.xml</include>
+					<include>mongo-log.xml</include>
+				</includes>
+				<filtering>true</filtering>
+			</resource>
+			
+		</resources>
 	</build>
 </project>

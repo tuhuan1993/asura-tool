@@ -75,6 +75,14 @@ public class DTaskGraph {
 	public synchronized boolean hasNextRunnalbeDTask() {
 		return peekNextRunnableDTask() != null;
 	}
+	
+	public Set<String> getAllTaskNames(){
+		Set<String> result=new HashSet<>();
+		for(DTask task:tasks){
+			result.add(task.getName());
+		}
+		return result;
+	}
 
 	public synchronized boolean hasTasks() {
 		return tasks.size() > 0;

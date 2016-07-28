@@ -9,8 +9,6 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
-import com.asura.tools.util.DateUtil.TimeUnit;
-
 public class DateUtil {
 	public static int getIntyyyyMMdd(Date date) {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
@@ -330,5 +328,50 @@ public class DateUtil {
 
 	public static enum TimeUnit {
 		day, month, week, hour, minute, second;
+	}
+	
+	public static List<String> parsePeriod(String period) {
+		List<String> result = new ArrayList<String>();
+		if (period.contains("|")) {
+			String from = period.split("\\|")[0];
+			String to = period.split("\\|")[1];
+			Date dstart = DateUtil.getDateFromString(from + " 00:00:00");
+			Date dend = DateUtil.getDateFromString(to + " 00:00:00");
+
+			Calendar start = Calendar.getInstance();
+			start.setTime(dstart);
+			Calendar end = Calendar.getInstance();
+			end.setTime(dend);
+
+			for (Date date = start.getTime(); !start.after(end); start.add(
+					Calendar.DATE, 1), date = start.getTime()) {
+				result.add(DateUtil.getDateString(date));
+			}
+		} else {
+			result.add(period);
+		}
+
+		return result;
+	}
+	
+	public static List<String> getDatePeriodsByRelativeDays(String period, int relativeDays){
+		List<String> periods=new ArrayList<String>();
+		Date periodDate = DateUtil.getDateFromString(period + " 00:00:00");
+		Calendar periodCalendar = Calendar.getInstance();
+		periodCalendar.setTime(periodDate);
+		periods.add(DateUtil.getDateString(periodDate));
+		int count=0;
+		while(count!=relativeDays){
+			if(relativeDays>0){
+				periodCalendar.add(Calendar.DATE, 1);
+				periods.add(DateUtil.getDateString(periodCalendar.getTime()));
+				count++;
+			}else if(relativeDays<0){
+				periodCalendar.add(Calendar.DATE, -1);
+				periods.add(DateUtil.getDateString(periodCalendar.getTime()));
+				count--;
+			}
+		}
+		return periods;
 	}
 }
