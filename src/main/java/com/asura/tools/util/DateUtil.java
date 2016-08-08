@@ -97,18 +97,18 @@ public class DateUtil {
 	}
 
 	public static double getTimeValue(TimeUnit tu, Date date1, Date date2) {
-		switch (tu.ordinal()) {
-		case 1:
+		switch (tu) {
+		case day:
 			return getTimeByDay(date1, date2);
-		case 2:
+		case month:
 			return getTimeByMonth(date1, date2);
-		case 3:
+		case week:
 			return getTimeByWeek(date1, date2);
-		case 4:
+		case hour:
 			return getTimeByHour(date1, date2);
-		case 5:
+		case minute:
 			return getTimeByMinute(date1, date2);
-		case 6:
+		case second:
 			return getTimeBySecond(date1, date2);
 		}
 		return 0.0D;
@@ -116,23 +116,23 @@ public class DateUtil {
 
 	public static long getMiniseconds(TimeUnit tu, double value) {
 		Double d;
-		switch (tu.ordinal()) {
-		case 1:
+		switch (tu) {
+		case day:
 			d = Double.valueOf(Long.valueOf("86400000").longValue() * value);
 			break;
-		case 2:
+		case month:
 			d = Double.valueOf(Long.valueOf("2592000000").longValue() * value);
 			break;
-		case 3:
+		case week:
 			d = Double.valueOf(Long.valueOf("604800000").longValue() * value);
 			break;
-		case 4:
+		case hour:
 			d = Double.valueOf(Long.valueOf("3600000").longValue() * value);
 			break;
-		case 5:
+		case minute:
 			d = Double.valueOf(Long.valueOf("60000").longValue() * value);
 			break;
-		case 6:
+		case second:
 			d = Double.valueOf(Long.valueOf("1000").longValue() * value);
 			break;
 		default:
@@ -144,23 +144,23 @@ public class DateUtil {
 
 	public static Date getBeforeDay(TimeUnit tu, double value) {
 		Double time = Double.valueOf(1.0D);
-		switch (tu.ordinal()) {
-		case 1:
+		switch (tu) {
+		case day:
 			time = Double.valueOf(value * Double.valueOf(86400000.0D).doubleValue());
 			break;
-		case 2:
+		case month:
 			time = Double.valueOf(value * Double.valueOf(2592000000.0D).doubleValue());
 			break;
-		case 3:
+		case week:
 			time = Double.valueOf(value * Double.valueOf(604800000.0D).doubleValue());
 			break;
-		case 4:
+		case hour:
 			time = Double.valueOf(value * Double.valueOf(3600000.0D).doubleValue());
 			break;
-		case 5:
+		case minute:
 			time = Double.valueOf(value * Double.valueOf(60000.0D).doubleValue());
 			break;
-		case 6:
+		case second:
 			time = Double.valueOf(value * Double.valueOf(1000.0D).doubleValue());
 		}
 
@@ -168,12 +168,12 @@ public class DateUtil {
 	}
 
 	public static int getDateCount(TimeUnit tu, int value) {
-		switch (tu.ordinal()) {
-		case 1:
+		switch (tu) {
+		case day:
 			return (value * 1);
-		case 2:
+		case month:
 			return (value * 30);
-		case 3:
+		case week:
 			return (value * 7);
 		}
 
@@ -329,7 +329,7 @@ public class DateUtil {
 	public static enum TimeUnit {
 		day, month, week, hour, minute, second;
 	}
-	
+
 	public static List<String> parsePeriod(String period) {
 		List<String> result = new ArrayList<String>();
 		if (period.contains("|")) {
@@ -343,8 +343,7 @@ public class DateUtil {
 			Calendar end = Calendar.getInstance();
 			end.setTime(dend);
 
-			for (Date date = start.getTime(); !start.after(end); start.add(
-					Calendar.DATE, 1), date = start.getTime()) {
+			for (Date date = start.getTime(); !start.after(end); start.add(Calendar.DATE, 1), date = start.getTime()) {
 				result.add(DateUtil.getDateString(date));
 			}
 		} else {
@@ -353,20 +352,20 @@ public class DateUtil {
 
 		return result;
 	}
-	
-	public static List<String> getDatePeriodsByRelativeDays(String period, int relativeDays){
-		List<String> periods=new ArrayList<String>();
+
+	public static List<String> getDatePeriodsByRelativeDays(String period, int relativeDays) {
+		List<String> periods = new ArrayList<String>();
 		Date periodDate = DateUtil.getDateFromString(period + " 00:00:00");
 		Calendar periodCalendar = Calendar.getInstance();
 		periodCalendar.setTime(periodDate);
 		periods.add(DateUtil.getDateString(periodDate));
-		int count=0;
-		while(count!=relativeDays){
-			if(relativeDays>0){
+		int count = 0;
+		while (count != relativeDays) {
+			if (relativeDays > 0) {
 				periodCalendar.add(Calendar.DATE, 1);
 				periods.add(DateUtil.getDateString(periodCalendar.getTime()));
 				count++;
-			}else if(relativeDays<0){
+			} else if (relativeDays < 0) {
 				periodCalendar.add(Calendar.DATE, -1);
 				periods.add(DateUtil.getDateString(periodCalendar.getTime()));
 				count--;

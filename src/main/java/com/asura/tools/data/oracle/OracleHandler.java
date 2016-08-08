@@ -48,7 +48,8 @@ public class OracleHandler {
 
 	public int getCount(String sql) {
 		try {
-			Statement ps = OracleConnetionPool.getConnection(this.ci).createStatement(1005, 1007);
+			Statement ps = OracleConnetionPool.getConnection(this.ci).createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+					ResultSet.CONCUR_READ_ONLY);
 
 			ResultSet resultSet = ps.executeQuery(sql);
 
@@ -72,13 +73,14 @@ public class OracleHandler {
 
 	public int getRecordsCount(String table) {
 		try {
-			Statement ps = OracleConnetionPool.getConnection(this.ci).createStatement(1005, 1007);
+			Statement ps = OracleConnetionPool.getConnection(this.ci).createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+					ResultSet.CONCUR_READ_ONLY);
 
 			ResultSet resultSet = ps.executeQuery("select count(1) from " + table);
 
 			resultSet.next();
 
-			Long count = (Long) resultSet.getObject(1);
+			Long count = (Long) resultSet.getLong(1);
 			try {
 				ps.close();
 			} catch (Exception localException1) {
@@ -131,13 +133,16 @@ public class OracleHandler {
 	}
 
 	private DataIterator<DataRecord> selectSql(final String sql, int fetchSize) {
-		
+
 		return new DataIterator<DataRecord>() {
 			private ResultSet resultSet;
 			private Statement ps;
 			private ResultSetMetaData meta;
-			
-			
+
+			{
+				initial();
+			}
+
 			private void initial() {
 				try {
 					this.ps = OracleConnetionPool.getConnection(OracleHandler.this.ci).createStatement(1005, 1007);
@@ -262,14 +267,14 @@ public class OracleHandler {
 		if (list.size() == 0) {
 			return new EmptyDataIterator();
 		}
-		
+
 		return new DataIterator<DataRecord>() {
 			private int pos;
 			private DataIterator<DataRecord> currentIt;
-			
+
 			{
-				pos=0;
-				currentIt=selectSql(((SelectSQL)list.get(0)).getSQLString(DBType.oracle),303240);
+				pos = 0;
+				currentIt = selectSql(((SelectSQL) list.get(0)).getSQLString(DBType.oracle), 303240);
 			}
 
 			@Override
@@ -280,8 +285,8 @@ public class OracleHandler {
 				if (this.pos < list.size() - 1) {
 					this.pos += 1;
 					this.currentIt.close();
-					this.currentIt = OracleHandler.this.selectSql(
-							((SelectSQL) list.get(this.pos)).getSQLString(ISQL.DBType.oracle), 100000);
+					this.currentIt = OracleHandler.this
+							.selectSql(((SelectSQL) list.get(this.pos)).getSQLString(ISQL.DBType.oracle), 100000);
 
 					return hasNext();
 				}
@@ -303,8 +308,7 @@ public class OracleHandler {
 			public void reset() {
 				this.pos = 0;
 				this.currentIt.close();
-				this.currentIt = OracleHandler.this.selectSql(((SelectSQL) list.get(this.pos)).getSQLString(),
-						100000);
+				this.currentIt = OracleHandler.this.selectSql(((SelectSQL) list.get(this.pos)).getSQLString(), 100000);
 			}
 		};
 	}
@@ -318,17 +322,17 @@ public class OracleHandler {
 		if (list.size() == 0) {
 			return new EmptyDataIterator();
 		}
-		
+
 		return new DataIterator<DataRecord>() {
 
 			private int pos;
 			private DataIterator<DataRecord> currentIt;
-			
+
 			{
-				pos=0;
-				currentIt=selectSql(((SelectSQL)list.get(0)).getSQLString(DBType.oracle),fetchSize);
+				pos = 0;
+				currentIt = selectSql(((SelectSQL) list.get(0)).getSQLString(DBType.oracle), fetchSize);
 			}
-			
+
 			@Override
 			public boolean hasNext() {
 				if (this.currentIt.hasNext()) {
@@ -337,15 +341,14 @@ public class OracleHandler {
 				if (this.pos < list.size() - 1) {
 					this.pos += 1;
 					this.currentIt.close();
-					this.currentIt = OracleHandler.this.selectSql(
-							((SelectSQL) list.get(this.pos)).getSQLString(ISQL.DBType.oracle),fetchSize);
+					this.currentIt = OracleHandler.this
+							.selectSql(((SelectSQL) list.get(this.pos)).getSQLString(ISQL.DBType.oracle), fetchSize);
 
 					return hasNext();
 				}
 				this.currentIt.close();
 				return false;
 			}
-
 
 			@Override
 			public DataRecord next() {
@@ -357,19 +360,16 @@ public class OracleHandler {
 				this.currentIt.close();
 			}
 
-
 			@Override
 			public void reset() {
 				this.pos = 0;
 				this.currentIt.close();
-				this.currentIt = OracleHandler.this.selectSql(
-						((SelectSQL) list.get(this.pos)).getSQLString(ISQL.DBType.oracle), fetchSize);
+				this.currentIt = OracleHandler.this
+						.selectSql(((SelectSQL) list.get(this.pos)).getSQLString(ISQL.DBType.oracle), fetchSize);
 			}
-			
-			
+
 		};
 
-		
 	}
 
 	public IEditor editor(String table) {
@@ -381,23 +381,21 @@ public class OracleHandler {
 	}
 
 	private IEditor editor(final String table, final boolean newCon) {
-		
+
 		return new IEditor() {
 			private Connection con;
-			
+
 			{
 				initial();
 			}
-			
-			
+
 			private void initial() {
 				if (newCon)
 					this.con = OracleConnetionPool.getNewConnection(OracleHandler.this.ci);
 				else
 					this.con = OracleConnetionPool.getConnection(OracleHandler.this.ci);
 			}
-			
-			
+
 			@Override
 			public void updateRecord(DataRecord dr) {
 				if ((dr != null) && (dr.getAllFields().length > 0)) {
@@ -411,7 +409,8 @@ public class OracleHandler {
 
 					PreparedStatement ps = null;
 					try {
-						ps = this.con.prepareStatement(sql, 1008);
+						ps = this.con.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE,
+								ResultSet.CONCUR_UPDATABLE);
 						ps.executeUpdate();
 						ps.close();
 					} catch (SQLException e) {
@@ -427,7 +426,6 @@ public class OracleHandler {
 				}
 			}
 
-			
 			@Override
 			public void processRecord(DataRecord dr) {
 				switch (dr.getDataAction()) {
@@ -441,12 +439,12 @@ public class OracleHandler {
 					updateRecord(dr);
 				}
 			}
-			
+
 			@Override
 			public void execute(String sql) {
 				PreparedStatement ps = null;
 				try {
-					ps = this.con.prepareStatement(sql, 1008);
+					ps = this.con.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 					ps.execute();
 					ps.close();
 				} catch (SQLException e) {
@@ -460,7 +458,7 @@ public class OracleHandler {
 						}
 				}
 			}
-			
+
 			@Override
 			public void deleteRecords(List<DataRecord> drs) {
 				if (drs.size() > 0) {
@@ -468,7 +466,8 @@ public class OracleHandler {
 					Connection con = OracleConnetionPool.getNewConnection(OracleHandler.this.ci);
 					try {
 						con.setAutoCommit(false);
-						ps = con.prepareStatement("select 1", 1008);
+						ps = con.prepareStatement("select 1", ResultSet.TYPE_SCROLL_SENSITIVE,
+								ResultSet.CONCUR_UPDATABLE);
 						for (DataRecord dr : drs) {
 							DeleteSQL delete = new DeleteSQL();
 							delete.addTable(table);
@@ -496,7 +495,6 @@ public class OracleHandler {
 				}
 			}
 
-			
 			@Override
 			public void deleteRecord(DataRecord dr) {
 				if ((dr != null) && (dr.getAllFields().length > 0)) {
@@ -508,7 +506,8 @@ public class OracleHandler {
 
 					PreparedStatement ps = null;
 					try {
-						ps = this.con.prepareStatement(delete.getSQLString(ISQL.DBType.oracle), 1008);
+						ps = this.con.prepareStatement(delete.getSQLString(ISQL.DBType.oracle),
+								ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 						ps.execute(delete.getSQLString(ISQL.DBType.oracle));
 						ps.close();
 					} catch (SQLException e) {
@@ -523,7 +522,7 @@ public class OracleHandler {
 					}
 				}
 			}
-			
+
 			@Override
 			public boolean containsRecord(DataRecord dr) {
 				if ((dr != null) && (dr.getAllFields().length > 0)) {
@@ -544,7 +543,7 @@ public class OracleHandler {
 				}
 				return false;
 			}
-			
+
 			@Override
 			public void commit() {
 				try {
@@ -556,7 +555,7 @@ public class OracleHandler {
 							+ ExceptionUtil.getExceptionContent(e));
 				}
 			}
-			
+
 			@Override
 			public void begineTransaction() {
 				try {
@@ -566,7 +565,7 @@ public class OracleHandler {
 							+ ExceptionUtil.getExceptionContent(e));
 				}
 			}
-			
+
 			@Override
 			public void addRecords(List<DataRecord> records, boolean override) {
 				if (records.size() <= 0)
@@ -591,23 +590,22 @@ public class OracleHandler {
 					}
 				}
 			}
-			
+
 			@Override
 			public void addRecords(List<DataRecord> drs) {
 				addRecords(drs, false);
 			}
 
-			
 			@Override
 			public void addRecord(DataRecord dr, boolean override) {
 				addRecord(dr, override, this.con);
 			}
-			
+
 			@Override
 			public void addRecord(DataRecord dr) {
 				addRecord(dr, false);
 			}
-			
+
 			private void addRecord(DataRecord dr, boolean override, Connection con) {
 				if ((dr != null) && (dr.getAllFields().length > 0)) {
 					InsertSQL insert = new InsertSQL();
@@ -716,7 +714,8 @@ public class OracleHandler {
 	public void execute(String sql) {
 		PreparedStatement ps = null;
 		try {
-			ps = OracleConnetionPool.getConnection(this.ci).prepareStatement(sql, 1008);
+			ps = OracleConnetionPool.getConnection(this.ci).prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE,
+					ResultSet.CONCUR_UPDATABLE);
 			ps.execute();
 			ps.close();
 		} catch (SQLException e) {

@@ -91,7 +91,7 @@ public class MultiThreadedDTaskExecutor implements DTaskExecutor {
 
 		final DTaskGraph taskGraph;
 		final CountDownLatch completed = new CountDownLatch(1);
-		DTaskGraphListener listener = new DefaultDtaskGraphListener();
+		DTaskGraphListener listener;
 
 		public Runner(DTaskGraph taskGraph, DTaskGraphListener listener) {
 			this.taskGraph = taskGraph;
@@ -104,30 +104,37 @@ public class MultiThreadedDTaskExecutor implements DTaskExecutor {
 				ArrayBlockingQueue<DTaskWrapper> completionQueue = new ArrayBlockingQueue<>(taskGraph.numTasks());
 				long currentlyExecuting = 0;
 				listener.begin(taskGraph);
+				logger.info("begin to run "+taskGraph);
 				while (true) {
 					while (taskGraph.hasNextRunnalbeDTask()) {
 						DTask t = taskGraph.nextRunnableDTask();
 						DTaskWrapper wrapper = new DTaskWrapper(t, completionQueue);
 						currentlyExecuting++;
+						logger.info("get runnable task "+t.getGroup()+":"+t.getName());
 						listener.traceStatus(taskGraph, t, STATE.START);
 						taskPool.execute(wrapper);
 					}
 					if (currentlyExecuting > 0) {
 						do {
+							logger.info("check runnable task if done.");
 							DTaskWrapper rw = completionQueue.take();
+							logger.info("runnable task is done."+rw.innerTask.getGroup()+":"+rw.innerTask.getName());
 							currentlyExecuting--;
 							listener.traceStatus(taskGraph, rw.innerTask, STATE.STOP);
 							if (rw.getErr() == null) {
 								taskGraph.notifyDone(rw.innerTask);
 								listener.traceStatus(taskGraph, rw.innerTask, STATE.SUCCESS);
+								logger.info("runnable task is success."+rw.innerTask.getGroup()+":"+rw.innerTask.getName());
 							} else {
 								taskGraph.notifyError(rw.innerTask, rw.err);
 								listener.traceStatus(taskGraph, rw.innerTask, STATE.ERROR);
+								logger.info("runnable task is failed."+rw.innerTask.getGroup()+":"+rw.innerTask.getName());
 							}
 						} while (!completionQueue.isEmpty());
 					}
 
 					if (!taskGraph.hasNextRunnalbeDTask() && currentlyExecuting == 0) {
+						logger.info("task graph no runnalbe tasks "+taskGraph);
 						return;
 					}
 				}
@@ -135,6 +142,7 @@ public class MultiThreadedDTaskExecutor implements DTaskExecutor {
 			} catch (InterruptedException e) {
 				// do nothing
 			} finally {
+				logger.info("end to run "+taskGraph);
 				listener.end(taskGraph);
 				completed.countDown();
 			}

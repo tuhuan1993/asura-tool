@@ -2,6 +2,8 @@ package com.asura.tools.sql;
 
 import java.util.ArrayList;
 
+import org.quartz.impl.jdbcjobstore.CloudscapeDelegate;
+
 import com.asura.tools.sql.BooleanCondition.BooleanClause;
 
 public class BooleanCondition implements ISQL {
@@ -15,11 +17,11 @@ public class BooleanCondition implements ISQL {
 	}
 
 	public void addCondition(ISQL sql, BooleanClause clause) {
-		switch (clause.ordinal()) {
-		case 2:
+		switch (clause) {
+		case Should:
 			this.orList.add(sql);
 			break;
-		case 1:
+		case Must:
 			this.andList.add(sql);
 			break;
 		default:

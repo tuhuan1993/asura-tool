@@ -26,7 +26,7 @@ public abstract class DefaultResChainHandler extends ResChainHandler {
 			rd = handle(record, log);
 		} catch (Exception e) {
 			log.log(e.getMessage());
-			logger.error("exception occurred when process handler "+getName(), e);
+			logger.error("exception occurred when process handler "+getName()+record.toString(), e);
 		}
 		if (isContinue() && getSuccesor() != null) {
 			return getSuccesor().process(rd, log);
