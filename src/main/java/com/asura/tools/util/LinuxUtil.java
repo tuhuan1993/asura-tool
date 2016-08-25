@@ -6,7 +6,7 @@ import com.asura.tools.util.math.NumberUtil;
 public class LinuxUtil {
 	public static String replace(String source, String target, String fileName) {
 		String replace = "sed -i 's/" + source + "/" + target + "/g' " + fileName;
-		String start = "/data/tmp.sh";
+		String start = "/tmp/tmp.sh";
 		String result = execute(replace, start);
 		FileUtil.deleteFile(start);
 
@@ -145,7 +145,7 @@ public class LinuxUtil {
 
 	public static String execute(String cmds) {
 		long id = Thread.currentThread().getId();
-		String name = "/data/tmp" + id + ".sh";
+		String name = "/tmp/tmp" + id + ".sh";
 		FileUtil.output(new String[] { cmds }, name, "utf8");
 		CommandUtil.execute("chmod 777 " + name);
 		String result = CommandUtil.execute(name);
