@@ -1,5 +1,6 @@
 package com.asura.tools.util.math;
 
+import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
@@ -7,6 +8,12 @@ public class NumberUtil {
 	private static final int NUM_MIN_ASC = 48;
 	private static final int NUM_MAX_ASC = 57;
 	private static final int DOT = 46;
+
+	public static double getLenedDoubleValue(double d, int len) {
+		BigDecimal bg = new BigDecimal(d);
+		double result = bg.setScale(len, BigDecimal.ROUND_HALF_UP).doubleValue();
+		return result;
+	}
 
 	public static String getLenedDouble(double d, int len) {
 		if ((Double.isNaN(d)) || (Double.isInfinite(d))) {
