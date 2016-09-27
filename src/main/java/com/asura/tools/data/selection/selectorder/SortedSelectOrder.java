@@ -1,16 +1,20 @@
-package com.asura.tools.data.selection;
+package com.asura.tools.data.selection.selectorder;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.asura.tools.data.selection.SelectMethod;
+import com.asura.tools.data.selection.data.DataBlock;
+import com.asura.tools.data.selection.data.DataBlocks;
+
 public class SortedSelectOrder implements ISelectOrder {
 	private static final long serialVersionUID = 9094133092796713995L;
 	private List<ISelectOrder> orders;
 
 	public SortedSelectOrder() {
-		this.orders = new ArrayList();
+		this.orders = new ArrayList<>();
 	}
 
 	public void addSelectOrder(ISelectOrder order) {
@@ -31,11 +35,10 @@ public class SortedSelectOrder implements ISelectOrder {
 	}
 
 	public Set<String> getAllFeatures() {
-		HashSet set = new HashSet();
+		HashSet<String> set = new HashSet<>();
 		for (ISelectOrder order : this.orders) {
 			set.addAll(order.getAllFeatures());
 		}
-
 		return set;
 	}
 

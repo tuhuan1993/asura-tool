@@ -5,7 +5,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.asura.tools.data.selection.expression.SimpleSelectOrder;
+import com.asura.tools.data.selection.data.DataBlock;
+import com.asura.tools.data.selection.data.DataBlocks;
+import com.asura.tools.data.selection.data.IFeaturable;
+import com.asura.tools.data.selection.ordervalue.NumberSequenceOrderValue;
+import com.asura.tools.data.selection.ordervalue.RangeNumberOrderValue;
+import com.asura.tools.data.selection.ordervalue.RangeStringOrderValue;
+import com.asura.tools.data.selection.ordervalue.SequenceOrderValue;
+import com.asura.tools.data.selection.selectorder.ClauseSelectOrder;
+import com.asura.tools.data.selection.selectorder.FeatureSelectOrder;
+import com.asura.tools.data.selection.selectorder.ISelectOrder;
+import com.asura.tools.data.selection.selectorder.LayerSelectOrder;
+import com.asura.tools.data.selection.selectorder.SimpleSelectOrder;
+import com.asura.tools.data.selection.selectorder.SortedSelectOrder;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
@@ -13,11 +25,11 @@ public class SelectMethod {
 	private List<OrderSequence> sequences;
 
 	public SelectMethod() {
-		this.sequences = new ArrayList();
+		this.sequences = new ArrayList<>();
 	}
 
 	public SelectMethod(ISelectOrder order) {
-		this.sequences = new ArrayList();
+		this.sequences = new ArrayList<>();
 		OrderSequence os = new OrderSequence();
 		os.addSelectOrder(order);
 		this.sequences.add(os);
@@ -40,7 +52,7 @@ public class SelectMethod {
 	}
 
 	public Set<String> getAllFeatures() {
-		HashSet set = new HashSet();
+		HashSet<String> set = new HashSet<>();
 		for (OrderSequence os : this.sequences) {
 			set.addAll(os.getAllFeatures());
 		}

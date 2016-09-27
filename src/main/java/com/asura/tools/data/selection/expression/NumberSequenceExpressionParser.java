@@ -1,7 +1,7 @@
 package com.asura.tools.data.selection.expression;
 
-import com.asura.tools.data.selection.IOrderValue;
-import com.asura.tools.data.selection.NumberSequenceOrderValue;
+import com.asura.tools.data.selection.ordervalue.IOrderValue;
+import com.asura.tools.data.selection.ordervalue.NumberSequenceOrderValue;
 import com.asura.tools.util.math.NumberUtil;
 
 public class NumberSequenceExpressionParser implements IExpressionParser {

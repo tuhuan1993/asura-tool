@@ -1,4 +1,4 @@
-package com.asura.tools.data.selection;
+package com.asura.tools.data.selection.ordervalue;
 
 public class RangeNumberOrderValue implements IOrderValue {
 	private static final long serialVersionUID = -8423378689478782174L;

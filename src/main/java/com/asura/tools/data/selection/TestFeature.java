@@ -1,5 +1,7 @@
 package com.asura.tools.data.selection;
 
+import com.asura.tools.data.selection.data.IFeaturable;
+
 public class TestFeature implements IFeaturable {
 	private long id;
 
@@ -29,7 +31,7 @@ public class TestFeature implements IFeaturable {
 	public int hashCode() {
 		int prime = 31;
 		int result = 1;
-		result = 31 * result + (int) (this.id ^ this.id >>> 32);
+		result = prime * result + (int) (this.id ^ this.id >>> 32);
 		return result;
 	}
 

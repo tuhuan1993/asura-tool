@@ -1,4 +1,4 @@
-package com.asura.tools.data.selection;
+package com.asura.tools.data.selection.ordervalue;
 
 import java.util.HashMap;
 
@@ -10,7 +10,7 @@ public class CharOrderValue implements IOrderValue {
 	private int currentId = 0;
 
 	public CharOrderValue() {
-		this.set = new HashMap();
+		this.set = new HashMap<>();
 	}
 
 	public boolean contains(String value) {

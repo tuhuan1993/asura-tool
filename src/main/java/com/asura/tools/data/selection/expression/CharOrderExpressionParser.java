@@ -1,7 +1,7 @@
 package com.asura.tools.data.selection.expression;
 
-import com.asura.tools.data.selection.CharOrderValue;
-import com.asura.tools.data.selection.IOrderValue;
+import com.asura.tools.data.selection.ordervalue.CharOrderValue;
+import com.asura.tools.data.selection.ordervalue.IOrderValue;
 
 public class CharOrderExpressionParser implements IExpressionParser {
 	public static final String CHAR = "char";

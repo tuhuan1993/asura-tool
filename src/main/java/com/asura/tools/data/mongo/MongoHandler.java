@@ -21,6 +21,7 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 import com.mongodb.MongoOptions;
+import com.mongodb.WriteConcern;
 
 public class MongoHandler {
 	private MongoConnection connection;
@@ -121,7 +122,7 @@ public class MongoHandler {
 			table.drop();
 			return count;
 		}
-		return table.remove(ob).getN();
+		return table.remove(ob, WriteConcern.SAFE).getN();
 	}
 
 	public List<DataRecord> selectList(String dbName, SelectSQL sql) {

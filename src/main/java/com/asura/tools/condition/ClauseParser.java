@@ -14,7 +14,7 @@ public class ClauseParser<T extends IClausable> implements IClausable {
 	public static final String Not = "!";
 	public static final String Left = "(";
 	public static final String Right = ")";
-	private static HashSet<String> spliter = new HashSet();
+	private static HashSet<String> spliter = new HashSet<>();
 
 	static {
 		spliter.add("&&");
@@ -29,14 +29,14 @@ public class ClauseParser<T extends IClausable> implements IClausable {
 	public IClausable parse(String exp, IExpParser<T> subParser, IExpClause clause) {
 		String[] ss = StringUtil.splitRemainRex(exp, (String[]) spliter.toArray(new String[0]));
 
-		HashSet used = new HashSet();
-		List startEnd = new ArrayList();
+		HashSet<Integer> used = new HashSet<>();
+		List<StartEnd> startEnd = new ArrayList<>();
 
-		HashMap map = new HashMap();
+		HashMap<StartEnd, IClausable> map = new HashMap<>();
 		boolean success;
-		do
+		do {
 			success = handleParenthese(ss, used, startEnd, map, subParser, clause);
-		while (success);
+		} while (success);
 
 		String[] total = new StartEnd(-1, ss.length).getStrings(ss, (StartEnd[]) map.keySet().toArray(new StartEnd[0]));
 
@@ -80,7 +80,7 @@ public class ClauseParser<T extends IClausable> implements IClausable {
 	public IClausable parseNoParenthese(String[] ss, HashMap<StartEnd, IClausable> map, IExpParser<T> parser,
 			IExpClause clause) {
 		clause = clause.clone();
-		List ids = new ArrayList();
+		List<Integer> ids = new ArrayList<>();
 		for (int i = 0; i < ss.length; ++i) {
 			if (isLogic(ss[i])) {
 				ids.add(Integer.valueOf(i));
@@ -89,8 +89,8 @@ public class ClauseParser<T extends IClausable> implements IClausable {
 
 		check(ss, ids);
 
-		HashSet used = new HashSet();
-		HashSet nots = new HashSet();
+		HashSet<Integer> used = new HashSet<>();
+		HashSet<Integer> nots = new HashSet<>();
 		used.addAll(ids);
 
 		if (ss.length == 1)

@@ -1,8 +1,11 @@
-package com.asura.tools.data.selection;
+package com.asura.tools.data.selection.selector;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.asura.tools.data.selection.data.DataBlock;
+import com.asura.tools.data.selection.data.DataBlocks;
+import com.asura.tools.data.selection.data.IFeaturable;
 import com.asura.tools.util.math.RandomUtil;
 
 public class RandomSelector implements ISelector {

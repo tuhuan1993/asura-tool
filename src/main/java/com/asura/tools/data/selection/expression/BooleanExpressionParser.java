@@ -1,7 +1,7 @@
 package com.asura.tools.data.selection.expression;
 
-import com.asura.tools.data.selection.IOrderValue;
-import com.asura.tools.data.selection.SequenceOrderValue;
+import com.asura.tools.data.selection.ordervalue.IOrderValue;
+import com.asura.tools.data.selection.ordervalue.SequenceOrderValue;
 
 public class BooleanExpressionParser implements IExpressionParser {
 	private static final String ONLY_TRUE = "t";
@@ -11,13 +11,13 @@ public class BooleanExpressionParser implements IExpressionParser {
 
 	public IOrderValue parse(String type) {
 		type = type.trim().toLowerCase();
-		if ("t".equals(type))
+		if (ONLY_TRUE.equals(type))
 			return new SequenceOrderValue(new String[] { "true" });
-		if ("f".equals(type))
+		if (ONLY_FLASE.equals(type))
 			return new SequenceOrderValue(new String[] { "false", "null" });
-		if ("tf".equals(type))
+		if (TRUE_FALSE.equals(type))
 			return new SequenceOrderValue(new String[] { "true", "false", "null" });
-		if ("ft".equals(type)) {
+		if (FALSE_TRUE.equals(type)) {
 			return new SequenceOrderValue(new String[] { "false", "null", "true" });
 		}
 
@@ -26,6 +26,7 @@ public class BooleanExpressionParser implements IExpressionParser {
 
 	public boolean canParse(String value) {
 		value = value.toLowerCase().trim();
-		return (("tf".equals(value)) || ("ft".equals(value)) || ("f".equals(value)) || ("t".equals(value)));
+		return ((TRUE_FALSE.equals(value)) || (FALSE_TRUE.equals(value)) || (ONLY_FLASE.equals(value))
+				|| (ONLY_TRUE.equals(value)));
 	}
 }

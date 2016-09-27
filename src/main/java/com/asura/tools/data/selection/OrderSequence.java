@@ -5,11 +5,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.asura.tools.data.selection.data.DataBlock;
+import com.asura.tools.data.selection.data.DataBlocks;
+import com.asura.tools.data.selection.selectorder.ISelectOrder;
+
 public class OrderSequence {
 	private List<ISelectOrder> orders;
 
 	public OrderSequence() {
-		this.orders = new ArrayList();
+		this.orders = new ArrayList<>();
 	}
 
 	public void addSelectOrder(ISelectOrder order) {
@@ -25,7 +29,7 @@ public class OrderSequence {
 	}
 
 	public Set<String> getAllFeatures() {
-		HashSet set = new HashSet();
+		HashSet<String> set = new HashSet<>();
 		for (ISelectOrder order : this.orders) {
 			set.addAll(order.getAllFeatures());
 		}
@@ -41,7 +45,7 @@ public class OrderSequence {
 		for (int i = 0; i < this.orders.size(); ++i) {
 			temp.clear();
 			for (DataBlock b : result.getBlocks()) {
-				temp.addDataBlocks(((ISelectOrder) this.orders.get(i)).sort(b));
+				temp.addDataBlocks(this.orders.get(i).sort(b));
 			}
 
 			result.clear();

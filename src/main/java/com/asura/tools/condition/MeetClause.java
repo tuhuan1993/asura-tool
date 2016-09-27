@@ -9,12 +9,12 @@ public class MeetClause <T, C extends IClausable> implements ICondition<T>, IExp
 
 	public MeetClause(IExpParser<C> subParser) {
 		this.subParser = subParser;
-		this.ands = new HashMap();
-		this.ors = new HashMap();
+		this.ands = new HashMap<>();
+		this.ors = new HashMap<>();
 	}
 
 	public boolean meet(T t) {
-		for (ICondition con : this.ands.keySet()) {
+		for (ICondition<T> con : this.ands.keySet()) {
 			boolean neg = ((Boolean) this.ands.get(con)).booleanValue();
 			if ((con.meet(t)) && (!(neg)))
 				continue;
@@ -24,7 +24,7 @@ public class MeetClause <T, C extends IClausable> implements ICondition<T>, IExp
 		}
 
 		int count = 0;
-		for (ICondition con : this.ors.keySet()) {
+		for (ICondition<T> con : this.ors.keySet()) {
 			boolean neg = ((Boolean) this.ors.get(con)).booleanValue();
 			if (((con.meet(t)) && (!(neg))) || ((!(con.meet(t))) && (neg))) {
 				++count;

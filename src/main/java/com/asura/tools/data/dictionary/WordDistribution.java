@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.asura.tools.data.dictionary.WordDistribution.CharToken;
-import com.asura.tools.data.selection.DataBlock;
-import com.asura.tools.data.selection.IFeaturable;
 import com.asura.tools.data.selection.SelectMethod;
+import com.asura.tools.data.selection.data.DataBlock;
+import com.asura.tools.data.selection.data.IFeaturable;
 import com.asura.tools.util.StringUtil;
 import com.asura.tools.util.collection.Accumulator;
 

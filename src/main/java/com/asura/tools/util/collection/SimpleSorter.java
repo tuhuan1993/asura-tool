@@ -3,10 +3,10 @@ package com.asura.tools.util.collection;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.asura.tools.data.selection.ClauseSelectOrder;
-import com.asura.tools.data.selection.DataBlock;
-import com.asura.tools.data.selection.DataBlocks;
 import com.asura.tools.data.selection.SelectMethod;
+import com.asura.tools.data.selection.data.DataBlock;
+import com.asura.tools.data.selection.data.DataBlocks;
+import com.asura.tools.data.selection.selectorder.ClauseSelectOrder;
 
 public class SimpleSorter<T> {
 	public List<T> sort(List<ISimpleSortable<T>> vs, String exp, int max) {

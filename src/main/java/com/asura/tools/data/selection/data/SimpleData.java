@@ -1,4 +1,4 @@
-package com.asura.tools.data.selection;
+package com.asura.tools.data.selection.data;
 
 import java.util.HashMap;
 
@@ -6,7 +6,7 @@ public class SimpleData implements IFeaturable {
 	private HashMap<String, String> map;
 
 	public SimpleData() {
-		this.map = new HashMap();
+		this.map = new HashMap<>();
 	}
 
 	public void addFeatureValue(String feature, String value) {

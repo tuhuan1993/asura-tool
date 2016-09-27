@@ -1,6 +1,6 @@
 package com.asura.tools.data.selection.expression;
 
-import com.asura.tools.data.selection.IOrderValue;
+import com.asura.tools.data.selection.ordervalue.IOrderValue;
 
 public interface IExpressionParser {
 	public static final String UNDERLINE = "_";

@@ -29,7 +29,7 @@ public class StartEnd {
 	}
 
 	public String[] getStrings(String[] ss, StartEnd[] subStartEnds) {
-		List list = new ArrayList();
+		List<String> list = new ArrayList<>();
 		for (int i = this.start + 1; i < this.end; ++i) {
 			StartEnd se = getStartEnd(subStartEnds, i);
 			if (se == null) {
@@ -54,7 +54,7 @@ public class StartEnd {
 	}
 
 	public StartEnd[] getChildren(StartEnd[] startEnds) {
-		List list = new ArrayList();
+		List<StartEnd> list = new ArrayList<>();
 
 		for (StartEnd se : startEnds) {
 			if (contains(se)) {
@@ -86,8 +86,8 @@ public class StartEnd {
 	public int hashCode() {
 		int prime = 31;
 		int result = 1;
-		result = 31 * result + this.end;
-		result = 31 * result + this.start;
+		result = prime * result + this.end;
+		result = prime * result + this.start;
 		return result;
 	}
 

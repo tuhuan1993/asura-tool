@@ -1,6 +1,6 @@
 package com.asura.tools.data.dictionary;
 
-import com.asura.tools.data.selection.IFeaturable;
+import com.asura.tools.data.selection.data.IFeaturable;
 
 public class WordGroupFeature implements IFeaturable {
 	private WordGroup group;

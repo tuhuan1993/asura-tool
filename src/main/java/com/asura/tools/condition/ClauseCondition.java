@@ -21,7 +21,7 @@ public class ClauseCondition<T> implements ICondition<T> {
 
 	public boolean meet(T t) {
 		if (this.ands != null) {
-			for (ICondition con : this.ands) {
+			for (ICondition<T> con : this.ands) {
 				if (!(con.meet(t))) {
 					return false;
 				}
@@ -29,7 +29,7 @@ public class ClauseCondition<T> implements ICondition<T> {
 		}
 
 		if (this.nots != null) {
-			for (ICondition con : this.nots) {
+			for (ICondition<T> con : this.nots) {
 				if (con.meet(t)) {
 					return false;
 				}
@@ -38,7 +38,7 @@ public class ClauseCondition<T> implements ICondition<T> {
 
 		if ((this.ors != null) && (this.ors.size() > 0)) {
 			boolean meet = false;
-			for (ICondition con : this.ors) {
+			for (ICondition<T> con : this.ors) {
 				if (con.meet(t)) {
 					meet = true;
 					break;

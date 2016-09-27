@@ -1,4 +1,4 @@
-package com.asura.tools.data.selection;
+package com.asura.tools.data.selection.ordervalue;
 
 public class NumberSequenceOrderValue implements IOrderValue {
 	private static final long serialVersionUID = -9136362527122430448L;

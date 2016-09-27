@@ -3,8 +3,8 @@ package com.asura.tools.data.newselection;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.asura.tools.data.selection.DataBlock;
-import com.asura.tools.data.selection.DataBlocks;
+import com.asura.tools.data.selection.data.DataBlock;
+import com.asura.tools.data.selection.data.DataBlocks;
 
 public class ConditionOrders {
 	private List<ConditionOrder> orders;

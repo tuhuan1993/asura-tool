@@ -231,7 +231,7 @@ public class DateUtil {
 		return dateString;
 	}
 
-	public static Date getDayBeforeTaody(int count) {
+	public static Date getDayBeforeToday(int count) {
 		Date date = new Date();
 		Calendar calendar = new GregorianCalendar();
 		calendar.setTime(date);

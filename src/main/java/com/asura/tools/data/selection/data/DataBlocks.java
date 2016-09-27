@@ -1,4 +1,4 @@
-package com.asura.tools.data.selection;
+package com.asura.tools.data.selection.data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -9,7 +9,7 @@ public class DataBlocks implements Serializable {
 	private List<DataBlock> blocks;
 
 	public DataBlocks() {
-		this.blocks = new ArrayList();
+		this.blocks = new ArrayList<>();
 	}
 
 	public void addDataBlock(DataBlock block) {
@@ -25,7 +25,7 @@ public class DataBlocks implements Serializable {
 	}
 
 	public void removeEmptyBlokcs() {
-		List temp = new ArrayList();
+		List<DataBlock> temp = new ArrayList<>();
 		for (DataBlock db : this.blocks) {
 			if (db.count() != 0) {
 				temp.add(db);
@@ -47,7 +47,7 @@ public class DataBlocks implements Serializable {
 	}
 
 	public List<IFeaturable> getAllDatas() {
-		List list = new ArrayList();
+		List<IFeaturable> list = new ArrayList<>();
 		for (DataBlock bl : this.blocks) {
 			list.addAll(bl.getDataList());
 		}

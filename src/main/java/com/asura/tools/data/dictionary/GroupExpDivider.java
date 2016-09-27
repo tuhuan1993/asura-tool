@@ -3,10 +3,10 @@ package com.asura.tools.data.dictionary;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.asura.tools.data.selection.DataBlock;
-import com.asura.tools.data.selection.DataBlocks;
-import com.asura.tools.data.selection.IFeaturable;
 import com.asura.tools.data.selection.SelectMethod;
+import com.asura.tools.data.selection.data.DataBlock;
+import com.asura.tools.data.selection.data.DataBlocks;
+import com.asura.tools.data.selection.data.IFeaturable;
 
 public class GroupExpDivider implements IGroupDivider {
 	private String exp;

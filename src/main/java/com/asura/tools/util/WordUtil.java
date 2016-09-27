@@ -48,4 +48,19 @@ public class WordUtil {
 
 		return wd;
 	}
+	
+	public static boolean isOnlyEnglish(String word){
+		StringBuilder sb = new StringBuilder();
+		if(word != null){
+			for(int i = 0;i< word.length();i++){
+				char c = word.charAt(i);
+				boolean isEnglishLetter = (c >='A'&& c <= 'Z') || ( c >= 'a' && c <= 'z');
+				if(!isEnglishLetter){
+					return false;
+				}
+			}
+		}
+		
+		return true;
+	}
 }

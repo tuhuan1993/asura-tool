@@ -10,10 +10,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.asura.tools.data.selection.DataBlock;
-import com.asura.tools.data.selection.DataBlocks;
-import com.asura.tools.data.selection.IFeaturable;
 import com.asura.tools.data.selection.SelectMethod;
+import com.asura.tools.data.selection.data.DataBlock;
+import com.asura.tools.data.selection.data.DataBlocks;
+import com.asura.tools.data.selection.data.IFeaturable;
 import com.asura.tools.debug.DebugPrinter;
 import com.asura.tools.util.CombinationUtil;
 import com.asura.tools.util.FileUtil;

@@ -1,4 +1,4 @@
-package com.asura.tools.data.selection;
+package com.asura.tools.data.selection.data;
 
 public interface IFeaturable {
 	public Object getObject();

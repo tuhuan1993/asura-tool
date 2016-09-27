@@ -1,4 +1,4 @@
-package com.asura.tools.data.selection;
+package com.asura.tools.data.selection.ordervalue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +66,7 @@ public class RangeStringOrderValue implements IOrderValue {
 
 	private void prepare() {
 		if ((this.values == null) || (this.values.size() == 0)) {
-			this.values = new ArrayList();
+			this.values = new ArrayList<>();
 			if (!(StringUtil.isNullOrEmpty(this.stringValues))) {
 				String[] ss = this.stringValues.split(",");
 				for (String s : ss)

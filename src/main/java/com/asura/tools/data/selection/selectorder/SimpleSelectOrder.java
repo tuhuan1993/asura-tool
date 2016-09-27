@@ -1,17 +1,20 @@
-package com.asura.tools.data.selection.expression;
+package com.asura.tools.data.selection.selectorder;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.asura.tools.data.selection.ClauseSelectOrder;
-import com.asura.tools.data.selection.DataBlock;
-import com.asura.tools.data.selection.DataBlocks;
-import com.asura.tools.data.selection.FeatureSelectOrder;
-import com.asura.tools.data.selection.IOrderValue;
-import com.asura.tools.data.selection.ISelectOrder;
 import com.asura.tools.data.selection.SelectMethod;
+import com.asura.tools.data.selection.data.DataBlock;
+import com.asura.tools.data.selection.data.DataBlocks;
+import com.asura.tools.data.selection.expression.BooleanExpressionParser;
+import com.asura.tools.data.selection.expression.IExpressionParser;
+import com.asura.tools.data.selection.expression.NumberRangeExpressionParser;
+import com.asura.tools.data.selection.expression.NumberSequenceExpressionParser;
+import com.asura.tools.data.selection.expression.StringRangeExpressionParser;
+import com.asura.tools.data.selection.expression.StringSequenceExpressionParser;
+import com.asura.tools.data.selection.ordervalue.IOrderValue;
 import com.asura.tools.util.StringUtil;
 
 public class SimpleSelectOrder implements ISelectOrder {
@@ -20,7 +23,7 @@ public class SimpleSelectOrder implements ISelectOrder {
 	private static final String SPLITER_TYPE = ":";
 	private String andFeatures;
 	private String orFeatures;
-	private static List<IExpressionParser> parsers = new ArrayList();
+	private static List<IExpressionParser> parsers = new ArrayList<>();
 
 	static {
 		parsers.add(new BooleanExpressionParser());
@@ -71,10 +74,10 @@ public class SimpleSelectOrder implements ISelectOrder {
 	}
 
 	private List<FeatureSelectOrder> buildOrder(String features) {
-		List orders = new ArrayList();
+		List<FeatureSelectOrder> orders = new ArrayList<>();
 		if (!(StringUtil.isNullOrEmpty(features))) {
-			for (String feature : features.split(",")) {
-				String[] ss = feature.split(":");
+			for (String feature : features.split(SPLITER_FEATURE)) {
+				String[] ss = feature.split(SPLITER_TYPE);
 				if (ss.length == 2) {
 					FeatureSelectOrder featureOrder = new FeatureSelectOrder();
 					featureOrder.setFeature(ss[0].trim());
@@ -100,7 +103,7 @@ public class SimpleSelectOrder implements ISelectOrder {
 	}
 
 	public Set<String> getAllFeatures() {
-		HashSet set = new HashSet();
+		HashSet<String> set = new HashSet<>();
 		List<FeatureSelectOrder> andOrders = buildOrder(this.andFeatures);
 		List<FeatureSelectOrder> orOrders = buildOrder(this.orFeatures);
 

@@ -1,7 +1,7 @@
 package com.asura.tools.data.dictionary;
 
-import com.asura.tools.data.selection.IFeaturable;
 import com.asura.tools.data.selection.SelectMethod;
+import com.asura.tools.data.selection.data.IFeaturable;
 
 public class WordFeature implements IFeaturable {
 	private SingleWord word;

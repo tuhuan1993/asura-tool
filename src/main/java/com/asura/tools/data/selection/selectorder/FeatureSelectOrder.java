@@ -1,9 +1,15 @@
-package com.asura.tools.data.selection;
+package com.asura.tools.data.selection.selectorder;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.asura.tools.data.selection.data.DataBlock;
+import com.asura.tools.data.selection.data.DataBlocks;
+import com.asura.tools.data.selection.data.IFeaturable;
+import com.asura.tools.data.selection.data.MarkedData;
+import com.asura.tools.data.selection.ordervalue.CharOrderValue;
+import com.asura.tools.data.selection.ordervalue.IOrderValue;
 import com.asura.tools.debug.DebugPrinter;
 
 public class FeatureSelectOrder implements ISelectOrder {
@@ -66,9 +72,8 @@ public class FeatureSelectOrder implements ISelectOrder {
 	}
 
 	public Set<String> getAllFeatures() {
-		HashSet set = new HashSet();
+		HashSet<String> set = new HashSet<>();
 		set.add(this.feature);
-
 		return set;
 	}
 }

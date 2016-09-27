@@ -1,4 +1,4 @@
-package com.asura.tools.data.selection;
+package com.asura.tools.data.selection.data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,9 +12,9 @@ public class DataBlock implements Serializable {
 	private HashMap<Integer, Integer> indexMap;
 
 	public DataBlock() {
-		this.dataList = new ArrayList();
-		this.feList = new ArrayList();
-		this.indexMap = new HashMap();
+		this.dataList = new ArrayList<>();
+		this.feList = new ArrayList<>();
+		this.indexMap = new HashMap<>();
 	}
 
 	public void addData(IFeaturable data) {
@@ -43,13 +43,15 @@ public class DataBlock implements Serializable {
 	}
 
 	void addBlock(DataBlock block) {
-		for (MarkedData md : block.dataList)
+		for (MarkedData md : block.dataList) {
 			addMarkedData(md);
+		}
 	}
 
 	void removeBlock(DataBlock bl) {
-		for (MarkedData md : bl.dataList)
+		for (MarkedData md : bl.dataList) {
 			deleteMarkedData(md);
+		}
 	}
 
 	public void addDataIngoreCheck(IFeaturable data) {
@@ -57,15 +59,16 @@ public class DataBlock implements Serializable {
 	}
 
 	public void addDatas(List<IFeaturable> list) {
-		for (IFeaturable fe : list)
+		for (IFeaturable fe : list) {
 			addData(fe);
+		}
 	}
 
 	public int count() {
 		return this.indexMap.size();
 	}
 
-	List<MarkedData> getMarkedDataList() {
+	public List<MarkedData> getMarkedDataList() {
 		return this.dataList;
 	}
 
@@ -79,7 +82,7 @@ public class DataBlock implements Serializable {
 
 	public DataBlock andDataBlock(DataBlock block) {
 		DataBlock result = new DataBlock();
-		for (MarkedData md : this.dataList) {
+		for (MarkedData md : block.dataList) {
 			if (this.indexMap.containsKey(Integer.valueOf(md.getIndex()))) {
 				result.addMarkedData(md);
 			}
