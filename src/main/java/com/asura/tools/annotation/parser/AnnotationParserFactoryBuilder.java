@@ -4,8 +4,7 @@ import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.asura.tools.annotation.handler.rchandler.RCHandler;
-import com.asura.tools.classses.ClassScanner;
+import org.reflections.Reflections;
 
 public class AnnotationParserFactoryBuilder {
 
@@ -20,7 +19,9 @@ public class AnnotationParserFactoryBuilder {
 		public F build(Class<? extends Annotation> atype, F factory) throws Exception {
 			Set<Class<?>> results = new HashSet<>();
 			for (String pkg : packages) {
-				Set<Class<?>> rs = ClassScanner.scan(pkg, atype);
+				Reflections reflections = new Reflections(pkg);
+				Set<Class<?>> rs = reflections.getTypesAnnotatedWith(atype);
+				// Set<Class<?>> rs = ClassScanner.scan(pkg, atype);
 				if (rs != null && !rs.isEmpty()) {
 					results.addAll(rs);
 				}

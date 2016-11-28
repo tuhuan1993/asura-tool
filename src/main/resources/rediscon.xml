@@ -1,0 +1,9 @@
+<redis-info>
+  <host>127.0.0.1</host>
+  <port>6379</port>
+  <timeOut>1000</timeOut>
+  <maxTotal>100</maxTotal>
+  <maxIdle>10</maxIdle>
+  <maxWaitMillis>100</maxWaitMillis>
+  <testOnBorrow>true</testOnBorrow>
+</redis-info>
