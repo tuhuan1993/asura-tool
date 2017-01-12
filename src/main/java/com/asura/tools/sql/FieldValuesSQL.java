@@ -13,11 +13,11 @@ public class FieldValuesSQL implements ISQL, Serializable {
 	private String spliter = ", ";
 
 	public FieldValuesSQL() {
-		this.fieldMap = new LinkedHashSet();
+		this.fieldMap = new LinkedHashSet<>();
 	}
 
 	public FieldValuesSQL(String spliter) {
-		this.fieldMap = new LinkedHashSet();
+		this.fieldMap = new LinkedHashSet<>();
 		this.spliter = spliter;
 	}
 
@@ -41,7 +41,7 @@ public class FieldValuesSQL implements ISQL, Serializable {
 		if (this.fieldMap.size() == 0) {
 			return "";
 		}
-		List list = new ArrayList();
+		List<String> list = new ArrayList<>();
 		for (ISQL con : this.fieldMap) {
 			String sql = con.getSQLString(type);
 			if (!(StringUtil.isNullOrEmpty(sql))) {

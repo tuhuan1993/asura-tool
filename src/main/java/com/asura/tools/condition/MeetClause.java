@@ -2,7 +2,7 @@ package com.asura.tools.condition;
 
 import java.util.HashMap;
 
-public class MeetClause <T, C extends IClausable> implements ICondition<T>, IExpClause {
+public class MeetClause<T, C extends IClausable> implements ICondition<T>, IExpClause {
 	private HashMap<ICondition<T>, Boolean> ands;
 	private HashMap<ICondition<T>, Boolean> ors;
 	private IExpParser<C> subParser;

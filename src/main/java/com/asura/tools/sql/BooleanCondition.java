@@ -2,18 +2,14 @@ package com.asura.tools.sql;
 
 import java.util.ArrayList;
 
-import org.quartz.impl.jdbcjobstore.CloudscapeDelegate;
-
-import com.asura.tools.sql.BooleanCondition.BooleanClause;
-
 public class BooleanCondition implements ISQL {
 	private static final long serialVersionUID = 5167210794489313487L;
 	private ArrayList<ISQL> andList;
 	private ArrayList<ISQL> orList;
 
 	public BooleanCondition() {
-		this.andList = new ArrayList();
-		this.orList = new ArrayList();
+		this.andList = new ArrayList<>();
+		this.orList = new ArrayList<>();
 	}
 
 	public void addCondition(ISQL sql, BooleanClause clause) {

@@ -229,4 +229,18 @@ public class RedisHandler implements RedisOperation {
 		}
 	}
 
+	@Override
+	public Set<String> keys(String pattern) {
+		try (Jedis jedis = getJedis()) {
+			return jedis.keys(pattern);
+		}
+	}
+
+	@Override
+	public long hlen(String key) {
+		try (Jedis jedis = getJedis()) {
+			return jedis.hlen(key);
+		}
+	}
+
 }

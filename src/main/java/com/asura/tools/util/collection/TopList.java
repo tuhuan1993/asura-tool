@@ -10,12 +10,12 @@ public class TopList<T extends IWeightable> {
 
 	public TopList() {
 		this.capacity = 2147483647;
-		this.list = new ArrayList();
+		this.list = new ArrayList<>();
 	}
 
 	public TopList(int capacity) {
 		this.capacity = capacity;
-		this.list = new ArrayList();
+		this.list = new ArrayList<>();
 	}
 
 	public void clear() {

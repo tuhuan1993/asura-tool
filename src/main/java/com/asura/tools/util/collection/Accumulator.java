@@ -2,16 +2,14 @@ package com.asura.tools.util.collection;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.asura.tools.util.SortUtil;
-
-public class Accumulator <T> implements Serializable {
+public class Accumulator<T> implements Serializable {
 	private static final long serialVersionUID = 9056230844665828614L;
 	private Map<T, Integer> map;
 	private int allCount;
@@ -25,7 +23,7 @@ public class Accumulator <T> implements Serializable {
 			this.map.put(t, Integer.valueOf(0));
 		}
 
-		this.map.put(t, Integer.valueOf(((Integer) this.map.get(t)).intValue() + 1));
+		this.map.put(t, Integer.valueOf(this.map.get(t).intValue() + 1));
 		this.allCount += 1;
 	}
 
@@ -34,24 +32,24 @@ public class Accumulator <T> implements Serializable {
 			this.map.put(t, Integer.valueOf(0));
 		}
 
-		this.map.put(t, Integer.valueOf(((Integer) this.map.get(t)).intValue() + count));
+		this.map.put(t, Integer.valueOf(this.map.get(t).intValue() + count));
 		this.allCount += count;
 	}
 
 	public void minusKey(T t, int count) {
 		if (this.map.containsKey(t)) {
-			this.allCount -= Math.min(count, ((Integer) this.map.get(t)).intValue());
-			this.map.put(t, Integer.valueOf(((Integer) this.map.get(t)).intValue() - count));
-			if (((Integer) this.map.get(t)).intValue() <= 0)
+			this.allCount -= Math.min(count, this.map.get(t).intValue());
+			this.map.put(t, Integer.valueOf(this.map.get(t).intValue() - count));
+			if (this.map.get(t).intValue() <= 0)
 				this.map.remove(t);
 		}
 	}
 
 	public void minusKey(T t) {
 		if (this.map.containsKey(t)) {
-			this.allCount -= Math.min(1, ((Integer) this.map.get(t)).intValue());
-			this.map.put(t, Integer.valueOf(((Integer) this.map.get(t)).intValue() - 1));
-			if (((Integer) this.map.get(t)).intValue() <= 0)
+			this.allCount -= Math.min(1, this.map.get(t).intValue());
+			this.map.put(t, Integer.valueOf(this.map.get(t).intValue() - 1));
+			if (this.map.get(t).intValue() <= 0)
 				this.map.remove(t);
 		}
 	}
@@ -70,18 +68,18 @@ public class Accumulator <T> implements Serializable {
 	}
 
 	public void clear(T t) {
-		this.allCount -= ((Integer) this.map.get(t)).intValue();
+		this.allCount -= this.map.get(t).intValue();
 		this.map.put(t, Integer.valueOf(0));
 	}
 
 	public void delete(T t) {
-		this.allCount -= ((Integer) this.map.get(t)).intValue();
+		this.allCount -= this.map.get(t).intValue();
 		this.map.remove(t);
 	}
 
 	public int getCount(T t) {
 		if (this.map.containsKey(t)) {
-			return ((Integer) this.map.get(t)).intValue();
+			return this.map.get(t).intValue();
 		}
 		return 0;
 	}
@@ -97,7 +95,7 @@ public class Accumulator <T> implements Serializable {
 	public List<T> keysSortedByValue() {
 		ArrayList<KV> list = new ArrayList<KV>();
 		for (T k : this.map.keySet()) {
-			list.add(new KV(k, ((Integer) this.map.get(k)).intValue()));
+			list.add(new KV(k, this.map.get(k).intValue()));
 		}
 
 		Collections.sort(list);
@@ -111,31 +109,40 @@ public class Accumulator <T> implements Serializable {
 	}
 
 	public List<T> keysSortedByValue(int count) {
-		ArrayList list = new ArrayList();
-		for (Iterator localIterator = SortUtil.getTopsByValue(this.map, count).keySet().iterator(); localIterator
-				.hasNext();) {
-			Object obj = localIterator.next();
-			list.add(obj);
+		ArrayList<KV> list = new ArrayList<KV>();
+		for (T k : this.map.keySet()) {
+			list.add(new KV(k, this.map.get(k).intValue()));
 		}
 
-		return list;
-	}
-
-	public List<T> keysSortedByKey() {
-		ArrayList list = new ArrayList();
-		for (Object key : this.map.keySet()) {
-			list.add((Comparable) key);
-		}
 		Collections.sort(list);
 
+		ArrayList<T> result = new ArrayList<T>();
+		for (int i = 0; i < Math.min(count, list.size()); i++) {
+			result.add(list.get(i).getK());
+		}
+
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<T> keysSortedByKey() {
+		ArrayList<T> list = new ArrayList<>();
+		for (T key : this.map.keySet()) {
+			list.add(key);
+		}
+		Object[] os = list.toArray();
+		Arrays.sort(os);
+		for (Object o : os) {
+			list.add((T) o);
+		}
 		return list;
 	}
 
 	public Accumulator<T> clone() {
 		Accumulator<T> clone = new Accumulator<T>();
-		clone.map = new ConcurrentHashMap<T,Integer>();
+		clone.map = new ConcurrentHashMap<T, Integer>();
 		for (T key : this.map.keySet()) {
-			clone.map.put(key, (Integer) this.map.get(key));
+			clone.map.put(key, this.map.get(key));
 		}
 
 		clone.allCount = this.allCount;

@@ -11,10 +11,9 @@ import org.slf4j.LoggerFactory;
 import com.asura.tools.util.DateUtil;
 import com.asura.tools.util.ExceptionUtil;
 
-
 public class TaskBatch {
-	
-	private static final Logger logger=LoggerFactory.getLogger(TaskBatch.class);
+
+	private static final Logger logger = LoggerFactory.getLogger(TaskBatch.class);
 	private boolean complete;
 	private Stack<IBatchTask> tasks;
 	private List<Thread> pool;
@@ -24,11 +23,12 @@ public class TaskBatch {
 	private int pCount;
 
 	public TaskBatch(int count) {
-		this.tasks = new Stack();
+		this.tasks = new Stack<>();
 		this.pCount = 1;
-		this.pool = new ArrayList();
-		for (int i = 0; i < count; ++i)
+		this.pool = new ArrayList<>();
+		for (int i = 0; i < count; ++i) {
 			this.pool.add(new Thread(getRunnable()));
+		}
 	}
 
 	public void setPrintCount(int count) {
@@ -36,8 +36,9 @@ public class TaskBatch {
 	}
 
 	public void start() {
-		for (int i = 0; i < this.pool.size(); ++i)
-			((Thread) this.pool.get(i)).start();
+		for (int i = 0; i < this.pool.size(); ++i) {
+			this.pool.get(i).start();
+		}
 	}
 
 	public void addDone() {
@@ -47,7 +48,7 @@ public class TaskBatch {
 	public void waitForDone() {
 		for (int i = 0; i < this.pool.size(); ++i)
 			try {
-				((Thread) this.pool.get(i)).join();
+				this.pool.get(i).join();
 			} catch (InterruptedException e) {
 				logger.error(ExceptionUtil.getExceptionContent(e));
 			}

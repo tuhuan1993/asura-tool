@@ -93,7 +93,6 @@ public class SQLCondition implements ISQL {
 	}
 
 	public int hashCode() {
-		int prime = 31;
 		int result = 1;
 		result = 31 * result + ((this.condition == null) ? 0 : this.condition.hashCode());
 		result = 31 * result + ((this.field == null) ? 0 : this.field.hashCode());

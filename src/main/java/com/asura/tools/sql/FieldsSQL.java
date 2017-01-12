@@ -10,7 +10,7 @@ public class FieldsSQL implements ISQL, Serializable {
 	private LinkedHashSet<String> fields;
 
 	public FieldsSQL() {
-		this.fields = new LinkedHashSet();
+		this.fields = new LinkedHashSet<>();
 	}
 
 	public void addField(String field) {

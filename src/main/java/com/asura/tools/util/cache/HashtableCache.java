@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
-public class HashtableCache <K, V> implements ICache<K, V> {
+public class HashtableCache<K, V> implements ICache<K, V> {
 	private Hashtable<K, V> table;
 	private long capacity;
 	private List<K> keyList;
 
 	public HashtableCache(int capacity) {
-		this.table = new Hashtable();
-		this.keyList = new ArrayList();
+		this.table = new Hashtable<>();
+		this.keyList = new ArrayList<>();
 		this.capacity = capacity;
 	}
 

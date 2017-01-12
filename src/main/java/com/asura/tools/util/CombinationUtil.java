@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class CombinationUtil {
 	public static int getCountOfCombinationByWeight(String word) {
@@ -17,19 +18,19 @@ public class CombinationUtil {
 		return count;
 	}
 
-	public static List<List> getLimitedCombination(List<List> llist, int length) {
-		List result = new ArrayList();
-		List<List> rlist = getCombination(llist, length);
-		for (List list : rlist) {
-			List rrlist = getCombination(list);
+	public static <T> List<List<T>> getLimitedCombination(List<List<T>> llist, int length) {
+		List<List<T>> result = new ArrayList<>();
+		List<List<List<T>>> rlist = getCombination(llist, length);
+		for (List<List<T>> list : rlist) {
+			List<List<T>> rrlist = getCombination(list);
 			result.addAll(rrlist);
 		}
 
 		return result;
 	}
 
-	public static List<List> getLimitedCombinationWithinMax(List<List> llist, int max) {
-		List result = new ArrayList();
+	public static <T> List<List<T>> getLimitedCombinationWithinMax(List<List<T>> llist, int max) {
+		List<List<T>> result = new ArrayList<>();
 		for (int i = 1; i <= max; ++i) {
 			result.addAll(getLimitedCombination(llist, i));
 		}
@@ -37,10 +38,10 @@ public class CombinationUtil {
 		return result;
 	}
 
-	public static List<List<?>> getPermutation(List<?> list) {
-		List llist = new ArrayList();
+	public static <T> List<List<List<T>>> getPermutation(List<List<T>> list) {
+		List<List<List<T>>> llist = new ArrayList<>();
 		if (list.size() > 0) {
-			List newList = new ArrayList();
+			List<List<T>> newList = new ArrayList<>();
 			newList.add(list.get(0));
 			llist.add(newList);
 			for (int i = 1; i < list.size(); ++i) {
@@ -51,13 +52,13 @@ public class CombinationUtil {
 		return llist;
 	}
 
-	private static List<List<?>> buildPermutation(List<List<?>> llist, Object element) {
-		List newLList = new ArrayList();
-		for (List list : llist) {
+	private static <T> List<List<List<T>>> buildPermutation(List<List<List<T>>> llist, List<T> element) {
+		List<List<List<T>>> newLList = new ArrayList<>();
+		for (List<List<T>> list : llist) {
 			for (int i = 0; i <= list.size(); ++i) {
-				List newList = new ArrayList();
-				for (Iterator localIterator2 = list.iterator(); localIterator2.hasNext();) {
-					Object obj = localIterator2.next();
+				List<List<T>> newList = new ArrayList<>();
+				for (Iterator<List<T>> localIterator2 = list.iterator(); localIterator2.hasNext();) {
+					List<T> obj = localIterator2.next();
 					newList.add(obj);
 				}
 				newList.add(i, element);
@@ -68,8 +69,8 @@ public class CombinationUtil {
 		return newLList;
 	}
 
-	public static List<List> getCombination(List list, int length) {
-		List resultwList = new ArrayList();
+	public static <T> List<List<T>> getCombination(List<T> list, int length) {
+		List<List<T>> resultwList = new ArrayList<>();
 		if (list.size() <= length) {
 			resultwList.add(list);
 		} else {
@@ -78,29 +79,28 @@ public class CombinationUtil {
 				length = list.size() - length;
 				reverse = true;
 			}
-			List<List> newList = new ArrayList();
-			List wholeList = new ArrayList();
+			List<List<Entry<T>>> newList = new ArrayList<>();
+			List<Entry<T>> wholeList = new ArrayList<>();
 			for (int j = 0; j < list.size(); ++j) {
-				wholeList.add(new Entry(list.get(j), j));
+				wholeList.add(new Entry<T>(list.get(j), j));
 			}
 			for (int i = 0; i < length; ++i) {
-				List entryList = new ArrayList();
+				List<Entry<T>> entryList = new ArrayList<>();
 				for (int j = 0; j < list.size(); ++j) {
-					entryList.add(new Entry(list.get(j), j));
+					entryList.add(new Entry<T>(list.get(j), j));
 				}
 				newList.add(entryList);
 			}
 			newList = getCombination(newList);
 
-			Iterator it = newList.iterator();
-			HashSet resultSet = new HashSet();
-			Object entry;
+			Iterator<List<Entry<T>>> it = newList.iterator();
+			Set<Set<Integer>> resultSet = new HashSet<>();
 			while (it.hasNext()) {
-				List lo = (List) it.next();
-				HashSet hs = new HashSet();
-				for (Iterator localIterator1 = lo.iterator(); localIterator1.hasNext();) {
-					entry = localIterator1.next();
-					hs.add(Integer.valueOf(((Entry) entry).getPosition()));
+				List<Entry<T>> lo = it.next();
+				Set<Integer> hs = new HashSet<>();
+				for (Iterator<Entry<T>> localIterator = lo.iterator(); localIterator.hasNext();) {
+					Entry<T> entry = localIterator.next();
+					hs.add(entry.getPosition());
 				}
 
 				if (hs.size() < lo.size())
@@ -113,17 +113,17 @@ public class CombinationUtil {
 			}
 
 			if (reverse) {
-				List nnList = new ArrayList();
-				for (List newchildList : newList) {
+				List<List<Entry<T>>> nnList = new ArrayList<>();
+				for (List<Entry<T>> newchildList : newList) {
 					nnList.add(getLeftPart(wholeList, newchildList));
 				}
 				newList = nnList;
 			}
 
 			for (int i = 0; i < newList.size(); ++i) {
-				List vList = new ArrayList();
-				for (int j = 0; j < ((List) newList.get(i)).size(); ++j) {
-					vList.add(((Entry) ((List) newList.get(i)).get(j)).getObject());
+				List<T> vList = new ArrayList<>();
+				for (int j = 0; j < newList.get(i).size(); ++j) {
+					vList.add(newList.get(i).get(j).getObject());
 				}
 				resultwList.add(vList);
 			}
@@ -132,37 +132,35 @@ public class CombinationUtil {
 		return resultwList;
 	}
 
-	private static List getLeftPart(List sourceList, List valueList) {
-		List leftList = new ArrayList();
-		for (Iterator localIterator1 = sourceList.iterator(); localIterator1.hasNext();) {
-			Object o = localIterator1.next();
-			Entry entry = (Entry) o;
+	private static <T> List<Entry<T>> getLeftPart(List<Entry<T>> sourceList, List<Entry<T>> valueList) {
+		List<Entry<T>> leftList = new ArrayList<>();
+		for (Iterator<Entry<T>> localIterator1 = sourceList.iterator(); localIterator1.hasNext();) {
+			Entry<T> entry = localIterator1.next();
 			boolean contains = false;
-			for (Iterator localIterator2 = valueList.iterator(); localIterator2.hasNext();) {
-				Object ob = localIterator2.next();
-				Entry ventry = (Entry) ob;
+			for (Iterator<Entry<T>> localIterator2 = valueList.iterator(); localIterator2.hasNext();) {
+				Entry<T> ventry = localIterator2.next();
 				if (ventry.getPosition() == entry.getPosition()) {
 					contains = true;
 					break;
 				}
 			}
 			if (!(contains)) {
-				leftList.add(o);
+				leftList.add(entry);
 			}
 		}
 
 		return leftList;
 	}
 
-	public static List<List> getCombination(List<List> list) {
-		Hashtable recorder = new Hashtable();
-		Hashtable done = new Hashtable();
+	public static <T> List<List<T>> getCombination(List<List<T>> list) {
+		Hashtable<Integer, Integer> recorder = new Hashtable<>();
+		Hashtable<Integer, Integer> done = new Hashtable<>();
 		int changePosition = 0;
 		int currentPosition = 0;
-		List result = new ArrayList();
+		List<List<T>> result = new ArrayList<>();
 
 		for (int i = 0; i < list.size(); ++i) {
-			if (((List) list.get(i)).size() == 0) {
+			if (((List<T>) list.get(i)).size() == 0) {
 				list.remove(i);
 			}
 
@@ -173,13 +171,13 @@ public class CombinationUtil {
 		}
 
 		for (int i = 0; i < list.size(); ++i) {
-			done.put(Integer.valueOf(i), Integer.valueOf(((List) list.get(i)).size() - 1));
+			done.put(Integer.valueOf(i), Integer.valueOf(((List<T>) list.get(i)).size() - 1));
 		}
 
 		while ((recorder.size() <= done.size()) && (recorder.size() != 0)) {
-			List oneList = new ArrayList();
+			List<T> oneList = new ArrayList<>();
 			for (int i = 0; i < list.size(); ++i) {
-				oneList.add(((List) list.get(i)).get(((Integer) recorder.get(Integer.valueOf(i))).intValue()));
+				oneList.add(((List<T>) list.get(i)).get(((Integer) recorder.get(Integer.valueOf(i))).intValue()));
 			}
 			result.add(oneList);
 			adjustValue(list, recorder, done, currentPosition, changePosition);
@@ -188,7 +186,7 @@ public class CombinationUtil {
 		return result;
 	}
 
-	private static void adjustValue(List<List> list, Hashtable<Integer, Integer> recorder,
+	private static <T> void adjustValue(List<List<T>> list, Hashtable<Integer, Integer> recorder,
 			Hashtable<Integer, Integer> done, int currentPosition, int changePosition) {
 		for (int i = 0; i < list.size(); ++i)
 			if (i < changePosition) {

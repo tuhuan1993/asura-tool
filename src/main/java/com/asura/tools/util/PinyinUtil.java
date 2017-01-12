@@ -13,15 +13,15 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
 import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 
 public class PinyinUtil {
-	private static Hashtable<String, String> endTable = new Hashtable();
+	private static Hashtable<String, String> endTable = new Hashtable<>();
 
-	private static Hashtable<String, String> startTable = new Hashtable();
+	private static Hashtable<String, String> startTable = new Hashtable<>();
 
-	private static Hashtable<String, String> rendTable = new Hashtable();
+	private static Hashtable<String, String> rendTable = new Hashtable<>();
 
-	private static Hashtable<String, String> rstartTable = new Hashtable();
+	private static Hashtable<String, String> rstartTable = new Hashtable<>();
 
-	private static Hashtable<Character, String[]> resultCache = new Hashtable();
+	private static Hashtable<Character, String[]> resultCache = new Hashtable<>();
 	private static String[] yinjie;
 
 	static {
@@ -126,7 +126,7 @@ public class PinyinUtil {
 	}
 
 	public static String[][] getMultiYinjie(String pinYin) {
-		List pinyinList = new Vector();
+		List<String> pinyinList = new Vector<>();
 		multiAnalyzer(pinYin, "", pinyinList);
 		String[][] pys = new String[pinyinList.size()][];
 		for (int i = 0; i < pinyinList.size(); ++i) {
@@ -139,12 +139,12 @@ public class PinyinUtil {
 		if ((word.length() > 10) || (!(StringUtil.isAllChineseCharacter(word)))) {
 			return new String[] { getPinyinString(word) };
 		}
-		List result = new ArrayList();
-		List<List> llist = getPinyinList(word);
-		for (List list : llist) {
+		List<String> result = new ArrayList<>();
+		List<List<String>> llist = getPinyinList(word);
+		for (List<String> list : llist) {
 			StringBuilder sb = new StringBuilder();
-			for (Iterator localIterator2 = list.iterator(); localIterator2.hasNext();) {
-				Object o = localIterator2.next();
+			for (Iterator<String> localIterator2 = list.iterator(); localIterator2.hasNext();) {
+				String o = localIterator2.next();
 				sb.append(o);
 			}
 			result.add(sb.toString());
@@ -153,10 +153,10 @@ public class PinyinUtil {
 		return ((String[]) result.toArray(new String[0]));
 	}
 
-	public static List<List> getPinyinList(String word) {
+	public static List<List<String>> getPinyinList(String word) {
 		HanyuPinyinOutputFormat outputFormat = new HanyuPinyinOutputFormat();
 		outputFormat.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
-		List llist = new ArrayList();
+		List<List<String>> llist = new ArrayList<>();
 		char[] chars = word.toCharArray();
 		for (char cr : chars) {
 			try {
@@ -169,8 +169,8 @@ public class PinyinUtil {
 						resultCache.put(Character.valueOf(cr), ps);
 					}
 				}
-				List list = new ArrayList();
-				HashSet set = new HashSet();
+				List<String> list = new ArrayList<>();
+				HashSet<String> set = new HashSet<>();
 				if (ps != null)
 					set.addAll(Arrays.asList(ps));
 				else {
@@ -208,12 +208,11 @@ public class PinyinUtil {
 			return new String[] { getFuzzyPinyin(word) };
 		}
 		String[] ss = CommonSpliter.getChineseEnglishSeparatedString(word);
-		List list = new ArrayList();
-		List<List> llist = new ArrayList();
+		List<String> list = new ArrayList<>();
+		List<List<String>> llist = new ArrayList<>();
 		int count = 0;
-		List l;
 		for (String s : ss) {
-			l = new ArrayList();
+			List<String> l = new ArrayList<>();
 			if (!(s.equals(getPinyinString(s)))) {
 				for (char c : s.toCharArray()) {
 					if (count++ < 4) {
@@ -225,7 +224,7 @@ public class PinyinUtil {
 						}
 					}
 					llist.add(l);
-					l = new ArrayList();
+					l = new ArrayList<>();
 				}
 			} else {
 				l.add(s);
@@ -233,16 +232,16 @@ public class PinyinUtil {
 			}
 		}
 		llist = CombinationUtil.getCombination(llist);
-		for (List l1 : llist) {
+		for (List<String> l1 : llist) {
 			StringBuffer sb = new StringBuffer();
-			for (Iterator it = l1.iterator(); it.hasNext();) {
-				Object o = it.next();
+			for (Iterator<String> it = l1.iterator(); it.hasNext();) {
+				String o = it.next();
 				sb.append(o);
 			}
 			list.add(sb.toString());
 		}
 
-		return ((String[]) list.toArray(new String[0]));
+		return list.toArray(new String[0]);
 	}
 
 	private static String fuzzyPinyin(String pinyin) {
@@ -283,7 +282,7 @@ public class PinyinUtil {
 		if (list.size() == 0) {
 			list.add(pinyin);
 		}
-		List elist = new ArrayList();
+		List<String> elist = new ArrayList<>();
 		for (String py : list) {
 			for (int i = 1; i <= py.length(); ++i) {
 				if (endTable.containsKey(py.substring(py.length() - i, py.length()))) {
@@ -313,13 +312,12 @@ public class PinyinUtil {
 		if ((word.length() > 10) || (!(StringUtil.isAllChineseCharacter(word)))) {
 			return new String[] { getPinyinHeader(word) };
 		}
-		HashSet result = new HashSet();
-		List<List> llist = getPinyinList(word);
-		for (List list : llist) {
+		HashSet<String> result = new HashSet<>();
+		List<List<String>> llist = getPinyinList(word);
+		for (List<String> list : llist) {
 			StringBuilder sb = new StringBuilder();
-			for (Iterator localIterator2 = list.iterator(); localIterator2.hasNext();) {
-				Object o = localIterator2.next();
-				String s = (String) o;
+			for (Iterator<String> localIterator2 = list.iterator(); localIterator2.hasNext();) {
+				String s = localIterator2.next();
 				if ((s != null) && (s.length() > 0))
 					sb.append(s.charAt(0));
 				else {
@@ -329,7 +327,7 @@ public class PinyinUtil {
 			result.add(sb.toString());
 		}
 
-		return ((String[]) result.toArray(new String[0]));
+		return result.toArray(new String[0]);
 	}
 
 	public static String getPinyinHeader(String word) {

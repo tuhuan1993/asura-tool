@@ -16,6 +16,7 @@ import com.asura.tools.util.StringUtil;
 import com.asura.tools.util.cache.SimpleCache;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
+import com.mongodb.Bytes;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
@@ -25,8 +26,8 @@ import com.mongodb.WriteConcern;
 
 public class MongoHandler {
 	private MongoConnection connection;
-	private static SimpleCache<String, DBCollection> cache = new SimpleCache(100000);
-	private static SimpleCache<String, Mongo> dbCache = new SimpleCache(10000);
+	private static SimpleCache<String, DBCollection> cache = new SimpleCache<>(100000);
+	private static SimpleCache<String, Mongo> dbCache = new SimpleCache<>(10000);
 
 	public MongoHandler(MongoConnection con) {
 		this.connection = con;
@@ -126,8 +127,8 @@ public class MongoHandler {
 	}
 
 	public List<DataRecord> selectList(String dbName, SelectSQL sql) {
-		List list = new ArrayList();
-		DataIterator it = select(dbName, sql);
+		List<DataRecord> list = new ArrayList<>();
+		DataIterator<DataRecord> it = select(dbName, sql);
 		while (it.hasNext()) {
 			list.add((DataRecord) it.next());
 		}
@@ -207,6 +208,7 @@ public class MongoHandler {
 				if (getMongo().getDatabaseNames().contains(dbName)) {
 					DBCollection table = getTable(dbName, sql.getTables().getTable(0));
 					cursor = find(table, sql);
+					cursor.addOption(Bytes.QUERYOPTION_NOTIMEOUT);
 					cursor.batchSize(fetchSize);
 					it = cursor.iterator();
 				} else {

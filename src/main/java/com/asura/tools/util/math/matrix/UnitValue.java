@@ -18,9 +18,9 @@ public class UnitValue {
 		this.count = 0;
 		this.maxCount = maxCount;
 
-		this.map = new HashMap();
-		this.lastMap = new HashMap();
-		this.min = new HashMap();
+		this.map = new HashMap<>();
+		this.lastMap = new HashMap<>();
+		this.min = new HashMap<>();
 		this.minAv = 2147483647.0D;
 	}
 
@@ -44,8 +44,9 @@ public class UnitValue {
 		this.map.put(id, Double.valueOf(value));
 	}
 
+	@SuppressWarnings("unchecked")
 	public void startNewRound() {
-		this.lastMap = ((HashMap) this.map.clone());
+		this.lastMap = ((HashMap<String, Double>) this.map.clone());
 
 		this.map.clear();
 	}
@@ -54,6 +55,7 @@ public class UnitValue {
 		return ((String[]) this.map.keySet().toArray(new String[0]));
 	}
 
+	@SuppressWarnings("unchecked")
 	public boolean isReady(double diff) {
 		if (this.count > this.maxCount) {
 			return true;
@@ -93,7 +95,7 @@ public class UnitValue {
 		double av = total / Double.valueOf(this.map.size()).doubleValue();
 		if (this.minAv > av) {
 			this.minAv = av;
-			this.min = ((HashMap) this.map.clone());
+			this.min = ((HashMap<String, Double>) this.map.clone());
 		}
 
 		return false;

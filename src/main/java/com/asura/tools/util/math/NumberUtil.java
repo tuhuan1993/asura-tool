@@ -3,11 +3,12 @@ package com.asura.tools.util.math;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 public class NumberUtil {
-	private static final int NUM_MIN_ASC = 48;
-	private static final int NUM_MAX_ASC = 57;
-	private static final int DOT = 46;
+	//private static final int NUM_MIN_ASC = 48;
+	//private static final int NUM_MAX_ASC = 57;
+	//private static final int DOT = 46;
 
 	public static double getLenedDoubleValue(double d, int len) {
 		BigDecimal bg = new BigDecimal(d);
@@ -48,7 +49,7 @@ public class NumberUtil {
 	}
 
 	public static Double[] getAllDoubles(String value) {
-		ArrayList set = new ArrayList();
+		List<Double> set = new ArrayList<>();
 		int start = -1;
 		int end = -1;
 		value = value.replace("。", ".");
@@ -83,6 +84,16 @@ public class NumberUtil {
 			d = Double.valueOf(getDouble(string));
 		}
 		return d.intValue();
+	}
+
+	public static long getLong(String string) {
+		Double d;
+		try {
+			return Integer.parseInt(string);
+		} catch (Exception e) {
+			d = Double.valueOf(getDouble(string));
+		}
+		return d.longValue();
 	}
 
 	public static double getDouble(String string) {

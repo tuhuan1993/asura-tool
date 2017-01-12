@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class TreeBuilder {
 	private HashMap<String, List<String>> dic;
@@ -15,13 +16,13 @@ public class TreeBuilder {
 
 	public TreeBuilder(String name) {
 		this.name = name;
-		this.dic = new HashMap();
-		this.map = new HashMap();
+		this.dic = new HashMap<>();
+		this.map = new HashMap<>();
 	}
 
 	public TreeBuilder() {
-		this.dic = new HashMap();
-		this.map = new HashMap();
+		this.dic = new HashMap<>();
+		this.map = new HashMap<>();
 	}
 
 	public boolean isAttr() {
@@ -49,19 +50,19 @@ public class TreeBuilder {
 	}
 
 	public String[] GetChildren(String name) {
-		return ((String[]) getChild(name).toArray(new String[0]));
+		return getChild(name).toArray(new String[0]);
 	}
 
 	public String[] GetParents(String name) {
 		if (this.dic.containsKey(name)) {
-			return ((String[]) ((List) this.dic.get(name)).toArray(new String[0]));
+			return this.dic.get(name).toArray(new String[0]);
 		}
 
 		return new String[0];
 	}
 
 	public String[] GetSblings(String name) {
-		HashSet set = new HashSet();
+		HashSet<String> set = new HashSet<>();
 
 		if (this.dic.containsKey(name)) {
 			for (String p : (List<String>) this.dic.get(name)) {
@@ -69,45 +70,47 @@ public class TreeBuilder {
 			}
 		}
 
-		return ((String[]) set.toArray(new String[0]));
+		return set.toArray(new String[0]);
 	}
 
 	public void AddMap(String name, String type) {
-		if (!(this.map.containsKey(name)))
+		if (!(this.map.containsKey(name))) {
 			this.map.put(name, type);
+		}
 	}
 
 	public void AddNode(String parent, String node) {
 		if (!(this.dic.containsKey(node))) {
-			this.dic.put(node, new ArrayList());
+			this.dic.put(node, new ArrayList<String>());
 		}
 
-		if (!(((List) this.dic.get(node)).contains(parent)))
-			((List) this.dic.get(node)).add(parent);
+		if (!this.dic.get(node).contains(parent)) {
+			this.dic.get(node).add(parent);
+		}
+
 	}
 
 	public String[] GetAllChild(String name) {
-		List result = new ArrayList();
+		List<String> result = new ArrayList<>();
 		findAllChildren(name, result);
-
-		return ((String[]) result.toArray(new String[0]));
+		return result.toArray(new String[0]);
 	}
 
 	private void findAllChildren(String name, List<String> result) {
 		String[] cs = (String[]) getChild(name).toArray(new String[0]);
 		result.addAll(Arrays.asList(cs));
-		for (String c : cs)
+		for (String c : cs) {
 			findAllChildren(c, result);
+		}
 	}
 
-	private HashSet<String> getChild(String node) {
-		HashSet list = new HashSet();
+	private Set<String> getChild(String node) {
+		Set<String> list = new HashSet<>();
 		for (String key : this.dic.keySet()) {
-			if (((List) this.dic.get(key)).contains(node)) {
+			if (this.dic.get(key).contains(node)) {
 				list.add(key);
 			}
 		}
-
 		return list;
 	}
 }

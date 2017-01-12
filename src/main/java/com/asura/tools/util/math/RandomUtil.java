@@ -15,8 +15,7 @@ public class RandomUtil {
 	}
 
 	public static int[] random(int min, int max, int count) {
-		HashSet set = new HashSet();
-
+		HashSet<Integer> set = new HashSet<>();
 		for (int i = 0; i < count * 2; ++i) {
 			int r = random(min, max);
 			set.add(Integer.valueOf(r));
@@ -24,7 +23,6 @@ public class RandomUtil {
 				break;
 			}
 		}
-
 		int[] is = new int[set.size()];
 		for (int i = 0; i < is.length; ++i) {
 			is[i] = ((Integer[]) set.toArray(new Integer[0]))[i].intValue();

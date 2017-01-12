@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-public class SimpleCache<K, V> implements Serializable {
+public class SimpleCache<K, V> implements ICache<K, V>, Serializable {
 	private static final long serialVersionUID = -412584736164379691L;
 	private LinkedHashMap<K, V> table;
 	private HashMap<K, Long> startTime;
@@ -13,10 +13,10 @@ public class SimpleCache<K, V> implements Serializable {
 	private long capacity;
 
 	public SimpleCache(int capacity) {
-		this.table = new LinkedHashMap<K,V>();
+		this.table = new LinkedHashMap<K, V>();
 		this.capacity = capacity;
-		this.startTime = new HashMap<K,Long>();
-		this.cacheTime = new HashMap<K,Integer>();
+		this.startTime = new HashMap<K, Long>();
+		this.cacheTime = new HashMap<K, Integer>();
 	}
 
 	public synchronized boolean iscached(K key) {
@@ -75,5 +75,14 @@ public class SimpleCache<K, V> implements Serializable {
 	public synchronized int size() {
 		return this.table.size();
 	}
-} 
 
+	@Override
+	public boolean isCached(K key) {
+		return this.table.containsKey(key);
+	}
+
+	@Override
+	public void delete(K key) {
+		this.table.remove(key);
+	}
+}

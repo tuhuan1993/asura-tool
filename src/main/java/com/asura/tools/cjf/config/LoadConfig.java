@@ -21,7 +21,7 @@ public class LoadConfig {
 
 	public Char[] loadFJmapUTF8() throws IOException {
 		String line = null;
-		ArrayList list = new ArrayList();
+		ArrayList<Char> list = new ArrayList<>();
 		BufferedReader br = null;
 		Char[] charList = (Char[]) null;
 		try {

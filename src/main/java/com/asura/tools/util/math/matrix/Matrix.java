@@ -8,15 +8,15 @@ public class Matrix {
 	private HashMap<String, List<Vote>> map;
 
 	public Matrix() {
-		this.map = new HashMap();
+		this.map = new HashMap<>();
 	}
 
 	public void addVote(Vote vote) {
 		if (!(this.map.containsKey(vote.getId2()))) {
-			this.map.put(vote.getId2(), new ArrayList());
+			this.map.put(vote.getId2(), new ArrayList<Vote>());
 		}
 
-		((List) this.map.get(vote.getId2())).add(vote);
+		this.map.get(vote.getId2()).add(vote);
 	}
 
 	public UnitValue compute() {
@@ -33,7 +33,7 @@ public class Matrix {
 		int count = 0;
 		while (true) {
 			for (String key : this.map.keySet()) {
-				List<Vote> list = (List) this.map.get(key);
+				List<Vote> list = this.map.get(key);
 				double total = 0.0D;
 				for (Vote v : list) {
 					double value = uv.getLastValue(v.getId1());

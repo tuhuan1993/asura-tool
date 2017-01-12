@@ -1,19 +1,19 @@
 package com.asura.tools.util;
 
-public class Entry {
-	private Object object;
+public class Entry<T> {
+	private T object;
 	private int position;
 
-	public Entry(Object object, int position) {
+	public Entry(T object, int position) {
 		this.object = object;
 		this.position = position;
 	}
 
-	public Object getObject() {
+	public T getObject() {
 		return this.object;
 	}
 
-	public void setObject(Object object) {
+	public void setObject(T object) {
 		this.object = object;
 	}
 
@@ -25,8 +25,9 @@ public class Entry {
 		this.position = position;
 	}
 
+	@SuppressWarnings("unchecked")
 	public boolean eqauls(Object obj) {
-		Entry entry = (Entry) obj;
+		Entry<T> entry = (Entry<T>) obj;
 		return ((entry.getObject().equals(this.object)) && (entry.position == this.position));
 	}
 

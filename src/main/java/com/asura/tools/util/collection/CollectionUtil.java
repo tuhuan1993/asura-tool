@@ -17,8 +17,8 @@ public class CollectionUtil {
 	public static <T extends IWeightable> List<T> getTop(List<T> list, int size) {
 		double minMax = 0.0D;
 		IWeightable minMaxT = null;
-		List result = new ArrayList();
-		for (IWeightable t : list) {
+		List<T> result = new ArrayList<>();
+		for (T t : list) {
 			boolean bigger = false;
 			if (minMax < t.getWeight()) {
 				minMax = t.getWeight();
@@ -26,13 +26,13 @@ public class CollectionUtil {
 			}
 			if (result.size() < size) {
 				result.add(t);
-				WeightedT wt = getMin(result);
+				WeightedT<T> wt = getMin(result);
 				minMaxT = (IWeightable) wt.getWeight();
 				minMax = wt.getValue();
 			} else if (bigger) {
 				result.remove(minMaxT);
 				result.add(t);
-				WeightedT wt = getMin(result);
+				WeightedT<T> wt = getMin(result);
 				minMaxT = (IWeightable) wt.getWeight();
 				minMax = wt.getValue();
 			}
@@ -44,11 +44,11 @@ public class CollectionUtil {
 
 	private static <T extends IWeightable> WeightedT<T> getMin(List<T> list) {
 		double min = 1.7976931348623157E+308D;
-		WeightedT minT = null;
-		for (IWeightable t : list) {
+		WeightedT<T> minT = null;
+		for (T t : list) {
 			if (t.getWeight() < min) {
 				min = t.getWeight();
-				minT = new WeightedT();
+				minT = new WeightedT<T>();
 				minT.setValue(min);
 				minT.setWeight(t);
 			}
@@ -60,8 +60,8 @@ public class CollectionUtil {
 	public static <T extends IWeightable> List<T> getButtom(List<T> list, int size) {
 		double maxMin = 0.0D;
 		IWeightable maxMinT = null;
-		List result = new ArrayList();
-		for (IWeightable t : list) {
+		List<T> result = new ArrayList<>();
+		for (T t : list) {
 			boolean bigger = false;
 			if (maxMin > t.getWeight()) {
 				maxMin = t.getWeight();
@@ -69,13 +69,13 @@ public class CollectionUtil {
 			}
 			if (result.size() < size) {
 				result.add(t);
-				WeightedT wt = getMax(result);
+				WeightedT<T> wt = getMax(result);
 				maxMinT = (IWeightable) wt.getWeight();
 				maxMin = wt.getValue();
 			} else if (bigger) {
 				result.remove(maxMinT);
 				result.add(t);
-				WeightedT wt = getMax(result);
+				WeightedT<T> wt = getMax(result);
 				maxMinT = (IWeightable) wt.getWeight();
 				maxMin = wt.getValue();
 			}
@@ -87,11 +87,11 @@ public class CollectionUtil {
 
 	private static <T extends IWeightable> WeightedT<T> getMax(List<T> list) {
 		double max = 4.9E-324D;
-		WeightedT maxT = null;
-		for (IWeightable t : list) {
+		WeightedT<T> maxT = null;
+		for (T t : list) {
 			if (t.getWeight() > max) {
 				max = t.getWeight();
-				maxT = new WeightedT();
+				maxT = new WeightedT<T>();
 				maxT.setValue(max);
 				maxT.setWeight(t);
 			}

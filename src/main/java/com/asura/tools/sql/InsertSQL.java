@@ -71,8 +71,8 @@ public class InsertSQL implements ISQL, Serializable {
 		} else {
 			ISQL[] fields = (ISQL[]) this.fieldValues.getFieldMap().toArray(new Serializable[0]);
 			if (fields.length > 0) {
-				List fList = new ArrayList();
-				List vList = new ArrayList();
+				List<String> fList = new ArrayList<>();
+				List<String> vList = new ArrayList<>();
 				for (ISQL f : fields) {
 					SQLCondition sc = (SQLCondition) f;
 					fList.add("\"" + sc.getField() + "\"");

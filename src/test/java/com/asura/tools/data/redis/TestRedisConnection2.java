@@ -7,8 +7,7 @@ public class TestRedisConnection2 {
 	@Test
 	public void test() {
 		RedisHandler handler = new RedisHandler();
-		while (true) {
-			System.out.println(handler.hget("haha", "name"));
-		}
+		System.out.println(handler.hget("midas.appkeys", "com.kugou.fanxing"));
+		handler.jedis().keys("");
 	}
 }

@@ -12,7 +12,7 @@ import com.asura.tools.util.StringUtil;
 public class StringWordCondition implements IStringCondition {
 	private static final long serialVersionUID = -1709326380126952262L;
 	private String words;
-	private static transient HashMap<String, HashSet<String>> wordMap = new HashMap();
+	private static transient HashMap<String, HashSet<String>> wordMap = new HashMap<>();
 	private boolean wholeWord;
 
 	public boolean isWholeWord() {
@@ -30,13 +30,13 @@ public class StringWordCondition implements IStringCondition {
 		if (this.wholeWord) {
 			String[] ss = StringUtil.split(string, "-");
 			for (String s : ss)
-				if (((HashSet) wordMap.get(this.words)).contains(s))
+				if ((wordMap.get(this.words)).contains(s))
 					return true;
 		} else {
 			for (int i = 1; i <= string.length(); ++i) {
 				String[] ss = CommonSpliter.split(string, i);
 				for (String s : ss) {
-					if (((HashSet) wordMap.get(this.words)).contains(s)) {
+					if ((wordMap.get(this.words)).contains(s)) {
 						return true;
 					}
 				}
@@ -48,24 +48,24 @@ public class StringWordCondition implements IStringCondition {
 
 	private static void initial(String word) {
 		if (!(wordMap.containsKey(word))) {
-			wordMap.put(word, new HashSet());
+			wordMap.put(word, new HashSet<String>());
 			String[] ss = word.split(",");
 			for (String s : ss) {
-				((HashSet) wordMap.get(word)).add(StringUtil.getStandardString(s));
+				(wordMap.get(word)).add(StringUtil.getStandardString(s));
 			}
 
-			List slist = new ArrayList();
+			List<String> slist = new ArrayList<>();
 			for (String s : ss) {
 				slist.add(StringUtil.getStandardString(s));
 			}
-			List<List> llist = CombinationUtil.getCombination(slist, 2);
-			for (List list : llist)
+			List<List<String>> llist = CombinationUtil.getCombination(slist, 2);
+			for (List<String> list : llist)
 				if (list.size() == 2) {
-					String s1 = (String) list.get(0);
-					String s2 = (String) list.get(1);
+					String s1 = list.get(0);
+					String s2 = list.get(1);
 
-					((HashSet) wordMap.get(word)).add(s1 + s2);
-					((HashSet) wordMap.get(word)).add(s2 + s1);
+					(wordMap.get(word)).add(s1 + s2);
+					(wordMap.get(word)).add(s2 + s1);
 				}
 		}
 	}

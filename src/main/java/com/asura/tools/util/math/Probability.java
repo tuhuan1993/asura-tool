@@ -58,12 +58,12 @@ public class Probability {
 
 	public static double getExpectation(double[] doubles) {
 		if (doubles.length > 0) {
-			Accumulator map = new Accumulator();
+			Accumulator<Double> map = new Accumulator<>();
 			for (double d : doubles) {
 				map.addKey(Double.valueOf(d));
 			}
 			double total = 0.0D;
-			Iterator it = map.getKeys().iterator();
+			Iterator<Double> it = map.getKeys().iterator();
 			while (true) {
 				double d = ((Double) (it).next()).doubleValue();
 

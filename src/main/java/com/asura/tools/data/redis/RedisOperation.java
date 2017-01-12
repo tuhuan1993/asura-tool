@@ -59,4 +59,8 @@ public interface RedisOperation {
 	public Jedis jedis();
 
 	public Set<String> hkeys(String key);
+
+	public Set<String> keys(String pattern);
+
+	public long hlen(String key);
 }

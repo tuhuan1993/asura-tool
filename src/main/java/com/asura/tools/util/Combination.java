@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Combination<T> {
 	public List<List<T>> getCombination(T[] array, int n) {
-		List combList = new ArrayList();
+		List<List<T>> combList = new ArrayList<>();
 
 		int m = array.length;
 		if (m < n) {
@@ -16,9 +16,10 @@ public class Combination<T> {
 		for (int i = 0; i < n; ++i) {
 			bs.set(i, true);
 		}
-		do
+		do {
 			printAll(array, bs, combList);
-		while (moveNext(bs, m));
+
+		} while (moveNext(bs, m));
 
 		return combList;
 	}
@@ -46,7 +47,7 @@ public class Combination<T> {
 	}
 
 	private void printAll(T[] array, BitSet bs, List<List<T>> combList) {
-		List list = new ArrayList();
+		List<T> list = new ArrayList<>();
 		for (int i = 0; i < array.length; ++i) {
 			if (bs.get(i)) {
 				list.add(array[i]);
