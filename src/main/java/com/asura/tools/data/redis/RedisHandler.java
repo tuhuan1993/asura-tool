@@ -29,7 +29,7 @@ public class RedisHandler implements RedisOperation {
 		this.connection = RedisConnection.fromConfigFile();
 	}
 
-	private Jedis getJedis() {
+	private synchronized Jedis getJedis() {
 		if (!redisPoolCache.iscached(this.connection.getHost() + ":" + this.connection.getPort())) {
 			logger.info("begin to initialize jedis pool " + this.connection);
 

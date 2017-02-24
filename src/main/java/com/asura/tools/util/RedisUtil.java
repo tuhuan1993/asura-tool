@@ -16,7 +16,7 @@ public class RedisUtil {
 
 	private static final Logger logger = LoggerFactory.getLogger(RedisUtil.class);
 
-	public static void syncHashKVs(RedisHandler handler, String key, Map<String, String> result, int batchSize,
+	public static void syncHashKVs(RedisHandler handler, String key, Map<String, ?> result, int batchSize,
 			boolean overried) {
 		if (!overried) {
 			int count = 0;
@@ -41,8 +41,8 @@ public class RedisUtil {
 
 		Map<String, String> subMap = new HashMap<>();
 		int count = 0;
-		for (Entry<String, String> entry : result.entrySet()) {
-			subMap.put(entry.getKey(), entry.getValue());
+		for (Entry<String, ?> entry : result.entrySet()) {
+			subMap.put(entry.getKey(), JsonUtil.fromObject(entry.getValue()));
 			if (++count % batchSize == 0) {
 				handler.hmset(key, subMap);
 				subMap.clear();
